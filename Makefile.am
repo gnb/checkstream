@@ -19,7 +19,7 @@
 
 bin_PROGRAMS=	genstream checkstream
 
-COMMON= common.c common.h stream.c stream.h args.c args.h
+COMMON= common.c common.h stream.c stream.h
 
 genstream_SOURCES=	genstream.c $(COMMON)
 

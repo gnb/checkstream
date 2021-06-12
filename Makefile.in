@@ -113,7 +113,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_1 = common.$(OBJEXT) stream.$(OBJEXT) args.$(OBJEXT)
+am__objects_1 = common.$(OBJEXT) stream.$(OBJEXT)
 am_checkstream_OBJECTS = checkstream.$(OBJEXT) panic.$(OBJEXT) \
 	$(am__objects_1)
 checkstream_OBJECTS = $(am_checkstream_OBJECTS)
@@ -310,7 +310,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-COMMON = common.c common.h stream.c stream.h args.c args.h
+COMMON = common.c common.h stream.c stream.h
 genstream_SOURCES = genstream.c $(COMMON)
 checkstream_SOURCES = checkstream.c panic.c panic.h $(COMMON)
 AM_CPPFLAGS = -D_LARGEFILE64_SOURCE
@@ -427,7 +427,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/checkstream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/genstream.Po@am__quote@

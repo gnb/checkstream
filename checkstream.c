@@ -18,7 +18,6 @@
  */
 #include "common.h"
 #include "stream.h"
-#include "args.h"
 #include "panic.h"
 
 /*
@@ -425,31 +424,30 @@ usage(void)
     exit(1);
 }
 
-static const args_desc_t arg_desc[] =
+static const struct option longopts[] =
 {
-    {'v', "verbose",	    ARG_UNVALUED},
-    {'l', "length",	    ARG_VALUED},
-    {'L', "loop",	    ARG_UNVALUED},
-    {'S', "sync",	    ARG_UNVALUED},
-    {'D', "direct",	    ARG_UNVALUED},
-    {'M', "mmap",	    ARG_UNVALUED},
-    {'b', "blocksize",	    ARG_VALUED},
-    {'e', "stop-on-error",  ARG_UNVALUED},
-    {ARGS_NOSHORT(1), "kernel-dump-on-error", ARG_UNVALUED},
-    {'s', "seek",   	    ARG_VALUED},
-    {'o', "offset",   	    ARG_VALUED},
-    {'C', "creator",	    ARG_UNVALUED},
-    {'T', "tag",	    ARG_VALUED},
-    {'P', "protocol",	    ARG_VALUED},
-    {'p', "port",	    ARG_VALUED},
-    {'V', "version",	    ARG_UNVALUED},
-    {0, 0, 0}
+    {"verbose",			no_argument,	    NULL, 'v'},
+    {"length",			required_argument,  NULL, 'l'},
+    {"loop",			no_argument,	    NULL, 'L'},
+    {"sync",			no_argument,	    NULL, 'S'},
+    {"direct",			no_argument,	    NULL, 'D'},
+    {"mmap",			no_argument,	    NULL, 'M'},
+    {"blocksize",		required_argument,  NULL, 'b'},
+    {"stop-on-error",		no_argument,	    NULL, 'e'},
+    {"kernel-dump-on-error",	no_argument,	    NULL, ARGS_NOSHORT(1)},
+    {"seek",			required_argument,  NULL, 's'},
+    {"offset",			required_argument,  NULL, 'o'},
+    {"creator",			no_argument,	    NULL, 'C'},
+    {"tag",			required_argument,  NULL, 'T'},
+    {"protocol",		required_argument,  NULL, 'P'},
+    {"port",			required_argument,  NULL, 'p'},
+    {"version",			no_argument,	    NULL, 'V'},
+    {0, 0, 0, 0}
 };
 
 int
 main(int argc, char **argv)
 {
-    args_state_t as;
     uint64_t length;
     bool_t have_length = FALSE;
     bool_t filter_mode = FALSE;
@@ -472,27 +470,10 @@ main(int argc, char **argv)
     oflags |= O_LARGEFILE;
 #endif
 
-#if 0
-    fprintf(stderr, "options {\n");
-    args_init(&as, argc, argv, arg_desc);
-    while ((c = args_next(&as)))
-    {
-	if (c < 0)
-	    usage();
-	fprintf(stderr, "    opt %c value=\"%s\"\n", c, args_value(&as));
-    }
-    fprintf(stderr, "} files {\n");
-    for (c = 0 ; c < args_nfiles(&as) ; c++)
-	fprintf(stderr, "    [%d]\"%s\"\n", c, args_files(&as)[c]);
-    fprintf(stderr, "}\n");
-    exit(0);
-#endif
-
     argv0 = tail(argv[0]);
-    args_init(&as, argc, argv, arg_desc);
-    while ((c = args_next(&as)))
+    while ((c = getopt_long(argc, argv, "CDLMP:ST:Vb:el:o:p:s:v", longopts, NULL)) != -1)
     {
-	if (c < 0)
+	if (c == '?')
 	    usage();
 
 	switch (c)
@@ -504,10 +485,10 @@ main(int argc, char **argv)
 	case 'l':
 	    if (have_length)
 		usage();
-	    if (!parse_length(args_value(&as), &length))
+	    if (!parse_length(optarg, &length))
 	    {
 		fprintf(stderr, "%s: cannot parse length \"%s\"\n",
-			    argv0, args_value(&as));
+			    argv0, optarg);
 		exit(1);
 	    }
 	    have_length = TRUE;
@@ -524,20 +505,20 @@ main(int argc, char **argv)
 	    break;
 
 	case 's':
-	    if (!parse_length(args_value(&as), &seek))
+	    if (!parse_length(optarg, &seek))
 	    {
 		fprintf(stderr, "%s: cannot parse seek \"%s\"\n",
-			argv0, args_value(&as));
+			argv0, optarg);
 		exit(1);
 	    }
 	    have_seek = TRUE;
 	    break;
 
 	case 'o':
-	    if (!parse_length(args_value(&as), &offset))
+	    if (!parse_length(optarg, &offset))
 	    {
 		fprintf(stderr, "%s: cannot parse offset \"%s\"\n",
-			argv0, args_value(&as));
+			argv0, optarg);
 		exit(1);
 	    }
 	    have_offset = TRUE;
@@ -566,19 +547,19 @@ main(int argc, char **argv)
 	    break;
 
 	case 'b':
-	    if (!parse_length(args_value(&as), &bsize))
+	    if (!parse_length(optarg, &bsize))
 	    {
 		fprintf(stderr, "%s: cannot parse blocksize \"%s\"\n",
-			argv0, args_value(&as));
+			argv0, optarg);
 		exit(1);
 	    }
 	    break;
 
 	case 'T':
-	    if (!parse_tag(args_value(&as), &tag))
+	    if (!parse_tag(optarg, &tag))
 	    {
 		fprintf(stderr, "%s: cannot parse tag \"%s\"\n",
-			argv0, args_value(&as));
+			argv0, optarg);
 		exit(1);
 	    }
 	    tag_flag = TRUE;
@@ -589,13 +570,13 @@ main(int argc, char **argv)
 	    break;
 
 	case 'P':
-	    if (!parse_protocol(args_value(&as), &protocol))
-		fatal("cannot parse protocol \"%s\"", args_value(&as));
+	    if (!parse_protocol(optarg, &protocol))
+		fatal("cannot parse protocol \"%s\"", optarg);
 	    break;
 
 	case 'p':
-	    if (!parse_tcp_port(args_value(&as), &port))
-		fatal("cannot parse port \"%s\"", args_value(&as));
+	    if (!parse_tcp_port(optarg, &port))
+		fatal("cannot parse port \"%s\"", optarg);
 	    break;
 
 	case 'V':
@@ -605,14 +586,22 @@ main(int argc, char **argv)
 	}
     }
 
-    if (args_nfiles(&as) > 1)
+    switch (argc-optind)
+    {
+    case 0:
+	filter_mode = TRUE;
+	file = 0;
+	break;
+    case 1:
+	filter_mode = FALSE;
+	file = argv[optind];
+	if (file == 0)
+	    usage();
+	break;
+    default:
 	usage();
-    filter_mode = (args_nfiles(&as) == 0);
-    file = (args_files(&as) == 0 ? 0 : args_files(&as)[0]);
-    args_clear(&as);
+    }
 
-    if (!filter_mode && file == 0)
-	usage();
     if (filter_mode && loop_mode)
 	usage();
     if (filter_mode && !have_length)

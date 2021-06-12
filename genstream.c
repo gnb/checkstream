@@ -18,7 +18,6 @@
  */
 #include "common.h"
 #include "stream.h"
-#include "args.h"
 
 
 const char *argv0;
@@ -135,29 +134,28 @@ usage(void)
     exit(1);
 }
 
-static const args_desc_t arg_desc[] =
+static const struct option longopts[] =
 {
-    {'C', "creator",    ARG_UNVALUED},
-    {'S', "sync", 	ARG_UNVALUED},
-    {'D', "direct", 	ARG_UNVALUED},
-    {'M', "mmap", 	ARG_UNVALUED},
-    {'b', "blocksize", 	ARG_VALUED},
-    {'c', "close", 	ARG_UNVALUED},
-    {'s', "seek",   	ARG_VALUED},
-    {'t', "no-truncate",ARG_UNVALUED},
-    {'T', "tag",	ARG_VALUED},
-    {'u', "unlink",	ARG_UNVALUED},
-    {'P', "protocol",	ARG_VALUED},
-    {'p', "port",	ARG_VALUED},
-    {'V', "version",	ARG_UNVALUED},
-    {ARGS_NOSHORT(0), "retry-eagain", ARG_UNVALUED},
-    {0, 0, 0}
+    {"creator",		no_argument,	    NULL, 'C'},
+    {"sync",		no_argument,	    NULL, 'S'},
+    {"direct",		no_argument,	    NULL, 'D'},
+    {"mmap",		no_argument,	    NULL, 'M'},
+    {"blocksize", 	required_argument,  NULL, 'b'},
+    {"close",		no_argument,	    NULL, 'c'},
+    {"seek",		required_argument,  NULL, 's'},
+    {"no-truncate",	no_argument,	    NULL, 't'},
+    {"tag",		required_argument,  NULL, 'T'},
+    {"unlink",		no_argument,	    NULL, 'u'},
+    {"protocol",	required_argument,  NULL, 'P'},
+    {"port",		required_argument,  NULL, 'p'},
+    {"version",		no_argument,	    NULL, 'V'},
+    {"retry-eagain",	no_argument,	    NULL, ARGS_NOSHORT(0)},
+    {0, 0, 0, 0}
 };
 
 int
 main(int argc, char **argv)
 {
-    args_state_t as;
     uint64_t length;
     const char *filename = 0;	/* or hostname for TCP */
     bool_t mmap_flag = FALSE;
@@ -177,11 +175,10 @@ main(int argc, char **argv)
 #endif
 
     argv0 = tail(argv[0]);
-    args_init(&as, argc, argv, arg_desc);
 
-    while ((c = args_next(&as)))
+    while ((c = getopt_long(argc, argv, "CDMP:ST:Vb:cp:s:tu", longopts, NULL)) != -1)
     {
-	if (c < 0)
+	if (c == '?')
 	    usage();
 
 	switch (c)
@@ -207,8 +204,8 @@ main(int argc, char **argv)
 	    break;
 
 	case 'b':
-	    if (!parse_length(args_value(&as), &bsize))
-		fatal("cannot parse blocksize \"%s\"", args_value(&as));
+	    if (!parse_length(optarg, &bsize))
+		fatal("cannot parse blocksize \"%s\"", optarg);
 	    break;
 
 	case 'c':
@@ -216,8 +213,8 @@ main(int argc, char **argv)
 	    break;
 
 	case 's':
-	    if (!parse_length(args_value(&as), &seek))
-		fatal("cannot parse seek \"%s\"", args_value(&as));
+	    if (!parse_length(optarg, &seek))
+		fatal("cannot parse seek \"%s\"", optarg);
 	    break;
 
 	case 't':
@@ -229,19 +226,19 @@ main(int argc, char **argv)
 	    break;
 
 	case 'T':
-	    if (!parse_tag(args_value(&as), &tag))
-		fatal("cannot parse tag \"%s\"", args_value(&as));
+	    if (!parse_tag(optarg, &tag))
+		fatal("cannot parse tag \"%s\"", optarg);
 	    tag_flag = TRUE;
 	    break;
 
 	case 'P':
-	    if (!parse_protocol(args_value(&as), &protocol))
-		fatal("cannot parse protocol \"%s\"", args_value(&as));
+	    if (!parse_protocol(optarg, &protocol))
+		fatal("cannot parse protocol \"%s\"", optarg);
 	    break;
 
 	case 'p':
-	    if (!parse_tcp_port(args_value(&as), &port))
-		fatal("cannot parse port \"%s\"", args_value(&as));
+	    if (!parse_tcp_port(optarg, &port))
+		fatal("cannot parse port \"%s\"", optarg);
 	    break;
 
 	case 'V':
@@ -256,8 +253,8 @@ main(int argc, char **argv)
     }
     oflags |= otrunc;
 
-    files = args_files(&as);
-    switch (args_nfiles(&as))
+    files = (const char **)argv+optind;
+    switch (argc-optind)
     {
     case 2:
 	filename = files[1];
@@ -269,7 +266,6 @@ main(int argc, char **argv)
     default:
 	usage();
     }
-    args_clear(&as);
 
     if (port && !protocol)
 	fatal("must specify --protocol=tcp with --port");

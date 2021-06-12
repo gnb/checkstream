@@ -39,6 +39,7 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
+#include <getopt.h>
 
 /*
  * This trick is straight from the gcc manual.  On non-gcc
@@ -241,5 +242,8 @@ typedef unsigned int	bool_t;
 #ifndef HAVE_LSEEK64
 #define lseek64		lseek
 #endif
+
+#define _ARGS_NOSHORT_BASE  0x100
+#define ARGS_NOSHORT(x)	    (_ARGS_NOSHORT_BASE+(x))
 
 #endif /* _CHECKSTREAM_COMMON_H_ */
