@@ -227,7 +227,7 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
 	    if (!signalled)
 	    {
 		fprintf(stderr, "%s: read failed at offset %llu\n",
-	    	    	    argv0, (unsigned long long)off);
+			    argv0, (unsigned long long)off);
 		found_extent(start, (off-start), last_failure, last_failure_detail);
 		found_extent(off, record_size, FM_SHORT, off);
 		last_failure = FM_SHORT;
@@ -268,7 +268,7 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
 
 	if (verbose > 2)
 	    fprintf(stderr, "[0x%llx] offset 0x%llx tag %02x checksum %04x\n",
-	    	    (unsigned long long)off, (unsigned long long)fi,
+		    (unsigned long long)off, (unsigned long long)fi,
 		    (unsigned)ftag, (unsigned)csum);
 
 	failure = FM_NONE;
@@ -503,7 +503,7 @@ main(int argc, char **argv)
 
 	case 'l':
 	    if (have_length)
-	    	usage();
+		usage();
 	    if (!parse_length(args_value(&as), &length))
 	    {
 		fprintf(stderr, "%s: cannot parse length \"%s\"\n",
@@ -527,7 +527,7 @@ main(int argc, char **argv)
 	    if (!parse_length(args_value(&as), &seek))
 	    {
 		fprintf(stderr, "%s: cannot parse seek \"%s\"\n",
-		    	argv0, args_value(&as));
+			argv0, args_value(&as));
 		exit(1);
 	    }
 	    have_seek = TRUE;
@@ -537,7 +537,7 @@ main(int argc, char **argv)
 	    if (!parse_length(args_value(&as), &offset))
 	    {
 		fprintf(stderr, "%s: cannot parse offset \"%s\"\n",
-		    	argv0, args_value(&as));
+			argv0, args_value(&as));
 		exit(1);
 	    }
 	    have_offset = TRUE;
@@ -556,7 +556,7 @@ main(int argc, char **argv)
 	    oflags |= O_DIRECT;
 #else
 	    fprintf(stderr, "%s: O_DIRECT not implemented on this platform, failing\n",
-	    	    argv0);
+		    argv0);
 	    exit(1);
 #endif /*O_DIRECT*/
 	    break;
@@ -569,7 +569,7 @@ main(int argc, char **argv)
 	    if (!parse_length(args_value(&as), &bsize))
 	    {
 		fprintf(stderr, "%s: cannot parse blocksize \"%s\"\n",
-		    	argv0, args_value(&as));
+			argv0, args_value(&as));
 		exit(1);
 	    }
 	    break;
@@ -578,7 +578,7 @@ main(int argc, char **argv)
 	    if (!parse_tag(args_value(&as), &tag))
 	    {
 		fprintf(stderr, "%s: cannot parse tag \"%s\"\n",
-		    	argv0, args_value(&as));
+			argv0, args_value(&as));
 		exit(1);
 	    }
 	    tag_flag = TRUE;
@@ -627,10 +627,10 @@ main(int argc, char **argv)
     {
 	if (protocol)
 	    printf("%s: reading %s from tcp port %d\n",
-	    	    argv0, iec_sizestr(length, 0, 0), (int)port);
+		    argv0, iec_sizestr(length, 0, 0), (int)port);
 	else if (filter_mode)
 	    printf("%s: reading %s from standard input\n",
-	    	    argv0, iec_sizestr(length, 0, 0));
+		    argv0, iec_sizestr(length, 0, 0));
 	else if (mmap_flag)
 	    printf("%s: mmaping filename \"%s\"%s\n",
 		argv0, file, (loop_mode ? " in loop" : ""));
@@ -640,7 +640,7 @@ main(int argc, char **argv)
 		argv0, file, (loop_mode ? " in loop" : ""));
 	    if (bsize)
 		printf("%s: using blocksize %s\n",
-	    		argv0, iec_sizestr(bsize, 0, 0));
+			argv0, iec_sizestr(bsize, 0, 0));
 	    if ((oflags & O_SYNC))
 		printf("%s: using O_SYNC\n", argv0);
 #ifdef O_DIRECT
