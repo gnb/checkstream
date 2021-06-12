@@ -20,7 +20,7 @@
 #define _CHECKSTREAM_COMMON_H_ 1
 
 #ifdef HAVE_CONFIG_H
-#include <config.h> /* for aspen tree autoconf defines */
+#include "config.h"
 #endif
 #include <sys/types.h>
 #include <stdio.h>

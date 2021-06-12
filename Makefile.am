@@ -25,7 +25,7 @@ genstream_SOURCES=	genstream.c $(COMMON)
 
 checkstream_SOURCES=	checkstream.c panic.c panic.h $(COMMON)
 
-INCLUDES =	-D_LARGEFILE64_SOURCE
+AM_CPPFLAGS =	-D_LARGEFILE64_SOURCE
 
 man_MANS=	genstream.1 checkstream.1
 EXTRA_DIST=	$(man_MANS)
