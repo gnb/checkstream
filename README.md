@@ -1,8 +1,8 @@
 Checkstream / Genstream
------------------------
+=======================
 
 What are they?
-==============
+--------------
 
 Genstream and checkstream are a pair of utilities which are useful
 in the diagnosis of file corruption problems, and have proven useful
@@ -14,7 +14,7 @@ used there for testing NFS, XFS and Linux HA, and released as open
 source in 2009.
 
 How do they work?
-=================
+-----------------
 
 The basic theory of operation is as follows.
 
@@ -45,7 +45,7 @@ an error, which is super useful for finding bugs in kernel filesystem
 implementations.
 
 How do I build them?
-=====================
+--------------------
 
 The build system is GNU autotools.  Read the file `INSTALL` for details.
 
