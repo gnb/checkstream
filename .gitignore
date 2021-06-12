@@ -1,0 +1,9 @@
+Makefile
+.deps/
+*.o
+checkstream
+genstream
+config.h
+config.log
+config.status
+stamp-h1
