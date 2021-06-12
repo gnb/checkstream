@@ -1,0 +1,36 @@
+Tue Apr 12 17:59:00 2005  Greg Banks <gnb@melbourne.sgi.com>
+	* release 0.0.8
+	* fixed bug which prevented mmap mode working in genstream
+	* added --seek option to genstream and checkstream
+	* specifying no -T option gives an extra 8 bits of file
+	  offset, allowing checking files larger than 1TiB
+	* use valloc() to page align write() buffer for direct IO
+	* remove duplicate perror() when write() fails
+
+Mon Nov 22 20:21:00 2004  Greg Banks <gnb@melbourne.sgi.com>
+	* release 0.0.7
+	* more work based on a patch from Dave Chinner
+	* added --version option to print version
+	* count number of bytes and blocks read/written and emit in stats
+	* added stream_flush() to ensure last partial block write is counted
+	* emit some stats always (regardless of loop_mode)
+	* emit stats about number of errors only when errors have occurred
+	* handle both SIGINT and SIGTERM in both genstream & checkstream
+
+Wed Nov 17 21:08:00 2004  Greg Banks <gnb@melbourne.sgi.com>
+	* release 0.0.6
+	* checkstream no longer silently accepts files shorter than 7 bytes
+	* checkstream complains about files which have unaligned lengths
+	* added -e option to checkstream, stops on first error
+	* added -T option to generate and check an 8 bit tag in each
+	  record, to detect inter-file corruption bugs.
+
+Tue Nov 16 18:13:00 2004  Greg Banks <gnb@melbourne.sgi.com>
+	* release 0.0.5
+	* thanks for Dave Chinner for various diffs
+	* speed improvements
+	* checkstream is less sensitive to --verbose
+	* fixed --blocksize on bigendian machines
+	* genstream output file is created & truncated by default
+	* added --no-truncate to avoid truncation
+	* fixed various compiler warnings
