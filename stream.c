@@ -344,9 +344,26 @@ unix_pull(stream_t *s)
 static int
 unix_push(stream_t *s)
 {
-    int n = write(s->fd, _stream_push_buffer(s), _stream_used_len(s));
-    if (n < 0 && errno != EINTR)
-    	sperror(s, write);
+    int64_t retry_sleep_ns = 10000000; /* 10 ms */
+    int retries_remaining = 10;
+    int n;
+    while ((n = write(s->fd, _stream_push_buffer(s), _stream_used_len(s))) < 0)
+    {
+	if (errno == EAGAIN &&
+	    (s->xflags & STREAM_RETRY_EAGAIN) &&
+	    --retries_remaining > 0)
+	{
+	    struct timespec delay;
+	    delay.tv_sec = retry_sleep_ns / 1000000000;
+	    delay.tv_nsec = retry_sleep_ns % 1000000000;
+	    nanosleep(&delay, NULL);
+	    retry_sleep_ns *= 2;
+	    continue;
+	}
+	if (errno != EINTR)
+	    sperror(s, write);
+	break;
+    }
     return n;
 }
 

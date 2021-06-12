@@ -119,6 +119,7 @@ static const char usage_str[] =
 "    -b SIZE, --blocksize=SIZE 	block size for read() syscalls\n"
 "    -s SIZE, --seek=SIZE   	seek to the given offset before writing\n"
 "    -t, --no-truncate   	don't truncate the output file (if file given)\n"
+"    --retry-eagain       	handle EAGAIN errors on write by retrying with backoff\n"
 "    -u, --unlink		unlink file after opening\n"
 "    -c, --close		close file descriptor after mmaping\n"
 "    -T NUM, --tag=N     	generate given 8-bit tag value in stream\n"
@@ -149,6 +150,7 @@ static const args_desc_t arg_desc[] =
     {'P', "protocol",	ARG_VALUED},
     {'p', "port",	ARG_VALUED},
     {'V', "version",	ARG_UNVALUED},
+    {ARGS_NOSHORT(0), "retry-eagain", ARG_UNVALUED},
     {0, 0, 0}
 };
 
@@ -246,6 +248,10 @@ main(int argc, char **argv)
 	    fputs("genstream version " VERSION "\n", stdout);
 	    fflush(stdout);
 	    exit(0);
+
+	case ARGS_NOSHORT(0): // retry-eagain
+	    xflags |= STREAM_RETRY_EAGAIN;
+	    break;
 	}
     }
     oflags |= otrunc;

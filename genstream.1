@@ -280,6 +280,13 @@ In the second form (with a \fIfile\fP argument given), and the \fB\-\-mmap\fP
 option given, close the file descriptor after \fBmmap\fP() but before writing
 to the mapped memory area.
 .\"
+.TP
+\fB\-\-retry\-eagain\fP
+Retry \fIwrite(2)\fP calls to the filesystem which fail with \fIEAGAIN\fP.
+This allows testing on FUSE filesystems which can have that behavior.
+\fBGenstream\fP will retry each write up to 10 times using exponential backoff,
+with the initial delay being 10 milliseconds and doubling on each attempt.
+.\"
 .SS Checkstream Options
 .TP
 \fB\-v\fP, \fB\-\-verbose\fP

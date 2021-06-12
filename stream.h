@@ -32,6 +32,7 @@ struct stream
 #define STREAM_UNLINK	(1<<0)
 #define STREAM_CLOSE	(1<<1)
 #define STREAM_NOMSYNC	(1<<2)
+#define STREAM_RETRY_EAGAIN	(1<<3)
     int xflags;
     int fd;
     struct stream_ops *ops;
