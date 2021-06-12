@@ -52,3 +52,8 @@ The build system is GNU autotools.  Read the file `INSTALL` for details.
 The build produces two binaries `genstream` and `checkstream`.  Their only
 dependencies are libc, so you can copy these to your test systems and run them
 directly.
+
+How do I use them?
+-------------------
+
+Read the manual pages for a discussion of some common testing scenarios.
