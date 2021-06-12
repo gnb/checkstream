@@ -77,7 +77,7 @@ generate_stream(stream_t *st, uint64_t length, uint64_t seek)
 
     for (i = 0 ; !signalled && i < length ; i += record_size)
     {
-    	off = i + seek;
+	off = i + seek;
 	rec = (record_t *)stream_inline_write(st, record_size);
 	if (rec == 0)
 	{
@@ -88,13 +88,13 @@ generate_stream(stream_t *st, uint64_t length, uint64_t seek)
 	if (tag_flag)
 	{
 	    rec->w8[2] = tag;
-    	    rec->w8[3] = (off >> 32) & 0xff;
+	    rec->w8[3] = (off >> 32) & 0xff;
 	}
 	else
 	{
-    	    rec->w16[1] = htons((off >> 32) & 0xffff);
+	    rec->w16[1] = htons((off >> 32) & 0xffff);
 	}
-    	rec->w32[1] = htonl(off & 0xffffffff);
+	rec->w32[1] = htonl(off & 0xffffffff);
 	if (creator_flag)
 	{
 	    rec->w32[2] = creator_bits[0];
@@ -181,12 +181,12 @@ main(int argc, char **argv)
 
     while ((c = args_next(&as)))
     {
-    	if (c < 0)
+	if (c < 0)
 	    usage();
 
-    	switch (c)
+	switch (c)
 	{
-    	case 'S':
+	case 'S':
 	    oflags |= O_SYNC;
 	    break;
 
@@ -202,11 +202,11 @@ main(int argc, char **argv)
 #endif /*O_DIRECT*/
 	    break;
 
-    	case 'M':
+	case 'M':
 	    mmap_flag = TRUE;
 	    break;
 
-    	case 'b':
+	case 'b':
 	    if (!parse_length(args_value(&as), &bsize))
 		fatal("cannot parse blocksize \"%s\"", args_value(&as));
 	    break;
@@ -215,7 +215,7 @@ main(int argc, char **argv)
 	    xflags |= STREAM_CLOSE;
 	    break;
 
-    	case 's':
+	case 's':
 	    if (!parse_length(args_value(&as), &seek))
 		fatal("cannot parse seek \"%s\"", args_value(&as));
 	    break;
@@ -260,14 +260,14 @@ main(int argc, char **argv)
     switch (args_nfiles(&as))
     {
     case 2:
-    	filename = files[1];
-    	/* fall through */
+	filename = files[1];
+	/* fall through */
     case 1:
 	if (!parse_length(files[0], &length))
-    	    fatal("cannot parse length \"%s\"", files[0]);
-    	break;
+	    fatal("cannot parse length \"%s\"", files[0]);
+	break;
     default:
-    	usage();
+	usage();
     }
     args_clear(&as);
 
@@ -277,7 +277,7 @@ main(int argc, char **argv)
     if (filename == 0)
     {
 	if (mmap_flag)
-    	    fatal("must specify a filename with --mmap option");
+	    fatal("must specify a filename with --mmap option");
 	if ((xflags & STREAM_UNLINK))
 	    fatal("must specify a filename with --unlink option");
 	if (oflags & O_SYNC)
@@ -288,7 +288,7 @@ main(int argc, char **argv)
     if (protocol)
     {
 	if (mmap_flag)
-    	    fatal("cannot use --protocol=tcp with --mmap option");
+	    fatal("cannot use --protocol=tcp with --mmap option");
 	if ((xflags & STREAM_UNLINK))
 	    fatal("cannot use --protocol=tcp with --unlink option");
 	if (oflags & O_SYNC)
@@ -307,11 +307,11 @@ main(int argc, char **argv)
     if (protocol)
 	stream = stream_client_open(filename, protocol, port, xflags, bsize);
     else if (filename == 0)
-    	stream = stream_unix_dopen(fileno(stdout), oflags, xflags, bsize);
+	stream = stream_unix_dopen(fileno(stdout), oflags, xflags, bsize);
     else if (mmap_flag)
-    	stream = stream_mmap_open(filename, oflags, xflags, length+seek);
+	stream = stream_mmap_open(filename, oflags, xflags, length+seek);
     else
-    	stream = stream_unix_open(filename, oflags, xflags, bsize);
+	stream = stream_unix_open(filename, oflags, xflags, bsize);
 
     if (stream == 0)
 	exit(1);    /* error message printed at lower level in stream.c */
@@ -322,7 +322,7 @@ main(int argc, char **argv)
 
     /* used for determining how many blocks have been read or written */
     fprintf(stderr, "%s: %s %llu blocks %llu bytes\n",
-    	    argv0,
+	    argv0,
 	    stream->name,
 	    (unsigned long long)stream->stats.nblocks,
 	    (unsigned long long)stream->stats.nbytes);

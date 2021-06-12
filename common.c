@@ -28,16 +28,16 @@ parse_length(const char *str, uint64_t *lengthp)
     char *end = 0;
 
     if (str == 0 || *str == '\0')
-    	return 0;
+	return 0;
 
     *lengthp = strtoull(str, &end, 0);
     if (end == 0 || end == str)
-    	return 0;   /* failed */
+	return 0;   /* failed */
 
     switch (*end)
     {
     case '\0':
-    	return 1;
+	return 1;
     case 'b': case 'B':
 	/* "bb" or "BB" suffix: length in basic blocks (512 byte units) */
 	if (end[1] != end[0])
@@ -46,16 +46,16 @@ parse_length(const char *str, uint64_t *lengthp)
 	*lengthp <<= 9;
 	break;
     case 'k': case 'K':
-    	*lengthp <<= 10;
+	*lengthp <<= 10;
 	break;
     case 'm': case 'M':
-    	*lengthp <<= 20;
+	*lengthp <<= 20;
 	break;
     case 'g': case 'G':
-    	*lengthp <<= 30;
+	*lengthp <<= 30;
 	break;
     case 't': case 'T':
-    	*lengthp <<= 40;
+	*lengthp <<= 40;
 	break;
     default:
 	return 0;
@@ -117,20 +117,20 @@ iec_sizestr(uint64_t sz, char *buf, int maxlen)
 {
     int shift = 0;
     static const char * const units[] = {
-    	"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"
+	"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"
     };
     static char defbuf[32];
 
     if (buf == 0)
     {
-    	buf = defbuf;
+	buf = defbuf;
 	maxlen = sizeof(defbuf);
     }
 
     while (sz >= 1024)
     {
 	sz >>= 10;
-    	shift += 10;
+	shift += 10;
     }
     snprintf(buf, maxlen, "%llu %s", (unsigned long long)sz, units[shift/10]);
     return buf;

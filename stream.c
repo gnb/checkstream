@@ -60,7 +60,7 @@ stream_pull(stream_t *s)
 	memmove(s->buffer, s->current, s->remain);
     s->current = s->buffer;
     if ((pulled = (s->ops->pull)(s)) < 0)
-    	return -1;
+	return -1;
     s->remain += pulled;
     s->stats.nblocks++;
     s->stats.nbytes += pulled;
@@ -105,10 +105,10 @@ stream_push(stream_t *s)
     int pushed;
 
     if ((pushed = (s->ops->push)(s)) < 0)
-    	return -1;
+	return -1;
     if (pushed < _stream_used_len(s))
     {
-    	/* TODO: handle short writes properly */
+	/* TODO: handle short writes properly */
 	fprintf(stderr, "short write!!!\n");
 	exit(1);
     }
@@ -123,7 +123,7 @@ int
 stream_seek(stream_t *s, uint64_t off)
 {
     if (s->ops->seek == 0)
-    	return -EOPNOTSUPP;
+	return -EOPNOTSUPP;
     return (*s->ops->seek)(s, off);
 }
 
@@ -136,7 +136,7 @@ stream_write(stream_t *s, char *buf, int len)
     {
 	unsigned long n = MIN(len, s->remain);
 
-    	assert(n > 0);
+	assert(n > 0);
 
 	memcpy(s->current, buf, n);
 	buf += n;
@@ -160,7 +160,7 @@ int
 stream_flush(stream_t *s)
 {
     if ((s->oflags & O_ACCMODE) != O_RDONLY)
-    	return stream_push(s);
+	return stream_push(s);
     return 0;
 }
 
@@ -196,7 +196,7 @@ static int
 mmap_seek(stream_t *s, uint64_t off)
 {
     if (off >= s->bufsize)
-    	return -EINVAL;
+	return -EINVAL;
     s->current = s->buffer + off;
     s->remain = s->bufsize - off;
     return 0;
@@ -215,13 +215,13 @@ mmap_close(stream_t *s)
 
     if (munmap(s->buffer, s->bufsize) < 0)
     {
-    	error = -errno;
+	error = -errno;
 	sperror(s, munmap);
     }
 
     if (s->fd >= 0 && close(s->fd) < 0)
     {
-    	error = -errno;
+	error = -errno;
 	sperror(s, close);
     }
 
@@ -250,13 +250,13 @@ stream_mmap_open(const char *filename, int oflags, int xflags, uint64_t size)
     switch (oflags & O_ACCMODE)
     {
     case O_RDONLY:
-    	prot = PROT_READ;
+	prot = PROT_READ;
 	break;
     case O_WRONLY:
-    	/* mmap() needs the mode to be O_RDWR */
+	/* mmap() needs the mode to be O_RDWR */
 	oflags &= ~O_ACCMODE;
 	oflags |= O_RDWR;
-    	prot = PROT_READ|PROT_WRITE;
+	prot = PROT_READ|PROT_WRITE;
 	break;
     default:
 	fprintf(stderr, "stream_mmap_open: invalid access mode\n");
@@ -286,7 +286,7 @@ stream_mmap_open(const char *filename, int oflags, int xflags, uint64_t size)
     }
     else if (size > sb.st_size)
     {
-    	if (ftruncate64(s->fd, size) < 0)
+	if (ftruncate64(s->fd, size) < 0)
 	{
 	    sperror(s, ftruncate64);
 	    goto failure;
@@ -337,7 +337,7 @@ unix_pull(stream_t *s)
 {
     int n = read(s->fd, _stream_pull_buffer(s), _stream_used_len(s));
     if (n < 0 && errno != EINTR)
-    	sperror(s, read);
+	sperror(s, read);
     return n;
 }
 
@@ -375,7 +375,7 @@ unix_seek(stream_t *s, uint64_t off)
     if (lseek64(s->fd, off, SEEK_SET) < 0)
     {
 	sperror(s, lseek64);
-    	return -1;
+	return -1;
     }
     return 0;
 }
@@ -415,7 +415,7 @@ stream_unix_dopen_1(const char *name, int fd, int oflags,
     s = xmalloc(sizeof(stream_t));
 
     if (bsize == 0)
-    	bsize = 4096;	/* simulate dumb stdio defaults */
+	bsize = 4096;	/* simulate dumb stdio defaults */
     s->name = xstrdup(name);
     s->buffer = xvalloc(bsize);
     s->bufsize = bsize;
@@ -438,7 +438,7 @@ stream_unix_open(const char *filename, int oflags, int xflags, uint64_t bsize)
     if ((fd = open(filename, oflags, 0600)) < 0)
     {
 	perrorf("open(\"%s\")", filename);
-    	return 0;
+	return 0;
     }
     if ((s = stream_unix_dopen_1(filename, fd, oflags, xflags, bsize, TRUE)) != 0)
     {
@@ -480,7 +480,7 @@ static int
 client_seek(stream_t *s, uint64_t off)
 {
     if (off >= s->bufsize)
-    	return -EINVAL;
+	return -EINVAL;
     s->current = s->buffer + off;
     s->remain = s->bufsize - off;
     return 0;
@@ -551,7 +551,7 @@ static int
 server_seek(stream_t *s, uint64_t off)
 {
     if (off >= s->bufsize)
-    	return -EINVAL;
+	return -EINVAL;
     s->current = s->buffer + off;
     s->remain = s->bufsize - off;
     return 0;

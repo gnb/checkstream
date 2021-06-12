@@ -83,7 +83,7 @@ static inline char *
 stream_inline_write(stream_t *s, int len)
 {
     if (len > s->bufsize)
-    	return 0;
+	return 0;
     if (s->remain < len)
     {
 	if (stream_push(s))
@@ -96,7 +96,7 @@ static inline const char *
 stream_inline_read(stream_t *s, int len)
 {
     if (len > s->bufsize)
-    	return 0;
+	return 0;
     if (s->remain < len)
     {
 	if (stream_pull(s) < 0 || s->remain < len)

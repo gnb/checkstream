@@ -36,7 +36,7 @@ args_add_file(args_state_t *st, const char *f)
 {
     if (st->files == 0)
     {
-    	st->files = (const char **)malloc(sizeof(const char *) * (st->count+1));
+	st->files = (const char **)malloc(sizeof(const char *) * (st->count+1));
 	if (st->files == 0)
 	{
 	    fprintf(stderr, "%s: out of memory allocating arguments\n",
@@ -56,7 +56,7 @@ args_find_short(args_state_t *st, char c)
 
     for (d = st->desc ; d->shortname ; d++)
     {
-    	if (d->shortname < _ARGS_NOSHORT_BASE && d->shortname == c)
+	if (d->shortname < _ARGS_NOSHORT_BASE && d->shortname == c)
 	    return d;
     }
     return 0;
@@ -69,7 +69,7 @@ args_find_long(args_state_t *st, const char *p, int len)
 
     for (d = st->desc ; d->shortname ; d++)
     {
-    	int l = strlen(d->longname);
+	int l = strlen(d->longname);
 	if (l == len && !memcmp(d->longname, p, l))
 	    return d;
     }
@@ -89,7 +89,7 @@ args_next(args_state_t *st)
     {
 	if (st->j)
 	{
-    	    /* continuing a previously started multiple-short option */
+	    /* continuing a previously started multiple-short option */
 	    arg = &st->vec[st->i][st->j++];
 	    if (*arg == '\0')
 	    {
@@ -122,7 +122,7 @@ args_next(args_state_t *st)
 	}
 
 	if (st->i >= st->count)
-    	    return 0;
+	    return 0;
 
 	arg = st->vec[st->i];
 	if (arg[0] != '-')
@@ -152,7 +152,7 @@ args_next(args_state_t *st)
 	    return -1;
 	}
 
-    	/* handle option's value */
+	/* handle option's value */
 	if ((desc->flags & ARG_VALUED))
 	{
 	    st->value = (end ? end+1 : st->vec[st->i++]);
@@ -200,7 +200,7 @@ args_clear(args_state_t *st)
 {
     if (st->files != 0)
     {
-    	free(st->files);
+	free(st->files);
 	st->files = 0;
     }
 }

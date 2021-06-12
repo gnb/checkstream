@@ -122,7 +122,7 @@ emit_stats(stream_t *s)
     char sizebuf2[32];
 
     if (deltat == 0)
-     	deltat = 1;		/* JIC, avoid divide by zero */
+	deltat = 1;		/* JIC, avoid divide by zero */
     for (failure = FM_NONE ; failure < FM_TOTAL ; failure++)
     {
 	if (num_errors[failure] > 0)
@@ -144,7 +144,7 @@ emit_stats(stream_t *s)
     }
     /* used for determining how many blocks have been read or written */
     fprintf(stderr, "%s: read %llu blocks %llu bytes in %u.%06u seconds (%g KiB/sec)%s\n",
-    	    	argv0,
+		argv0,
 		(unsigned long long)s->stats.nblocks,
 		(unsigned long long)s->stats.nbytes,
 		time_seconds(deltat), time_microseconds(deltat),
@@ -200,7 +200,7 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
     uint64_t creator, expected_creator = 0;
 
     if (start_us == 0)
-    	start_us = time_now();
+	start_us = time_now();
 
     if (length < record_size)
     {
@@ -220,9 +220,9 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
 
     for (i = 0 ; !signalled && i < length ; i += record_size)
     {
-    	off = i + offset0;
+	off = i + offset0;
 
-    	if ((rec = (record_t *)stream_inline_read(s, record_size)) == 0)
+	if ((rec = (record_t *)stream_inline_read(s, record_size)) == 0)
 	{
 	    if (!signalled)
 	    {
@@ -266,12 +266,12 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
 	    }
 	}
 
-    	if (verbose > 2)
+	if (verbose > 2)
 	    fprintf(stderr, "[0x%llx] offset 0x%llx tag %02x checksum %04x\n",
 	    	    (unsigned long long)off, (unsigned long long)fi,
 		    (unsigned)ftag, (unsigned)csum);
 
-    	failure = FM_NONE;
+	failure = FM_NONE;
 	failure_detail = 0;
 	if (csum)
 	{
@@ -374,7 +374,7 @@ check_stream(stream_t *s, uint64_t length, uint64_t offset0)
 
 out:
     if (get_num_errors())
-    	fprintf(stderr, "%s: \n", argv0);
+	fprintf(stderr, "%s: \n", argv0);
     emit_separator();
     fprintf(stderr, "%s: end of file summary\n", argv0);
     emit_stats(s);
@@ -483,7 +483,7 @@ main(int argc, char **argv)
     }
     fprintf(stderr, "} files {\n");
     for (c = 0 ; c < args_nfiles(&as) ; c++)
-    	fprintf(stderr, "    [%d]\"%s\"\n", c, args_files(&as)[c]);
+	fprintf(stderr, "    [%d]\"%s\"\n", c, args_files(&as)[c]);
     fprintf(stderr, "}\n");
     exit(0);
 #endif
@@ -492,12 +492,12 @@ main(int argc, char **argv)
     args_init(&as, argc, argv, arg_desc);
     while ((c = args_next(&as)))
     {
-    	if (c < 0)
+	if (c < 0)
 	    usage();
 
-    	switch (c)
+	switch (c)
 	{
-    	case 'v':
+	case 'v':
 	    verbose++;
 	    break;
 
@@ -506,7 +506,7 @@ main(int argc, char **argv)
 	    	usage();
 	    if (!parse_length(args_value(&as), &length))
 	    {
-    		fprintf(stderr, "%s: cannot parse length \"%s\"\n",
+		fprintf(stderr, "%s: cannot parse length \"%s\"\n",
 			    argv0, args_value(&as));
 		exit(1);
 	    }
@@ -523,20 +523,20 @@ main(int argc, char **argv)
 		exit(1);
 	    break;
 
-    	case 's':
+	case 's':
 	    if (!parse_length(args_value(&as), &seek))
 	    {
-    		fprintf(stderr, "%s: cannot parse seek \"%s\"\n",
+		fprintf(stderr, "%s: cannot parse seek \"%s\"\n",
 		    	argv0, args_value(&as));
 		exit(1);
 	    }
 	    have_seek = TRUE;
 	    break;
 
-    	case 'o':
+	case 'o':
 	    if (!parse_length(args_value(&as), &offset))
 	    {
-    		fprintf(stderr, "%s: cannot parse offset \"%s\"\n",
+		fprintf(stderr, "%s: cannot parse offset \"%s\"\n",
 		    	argv0, args_value(&as));
 		exit(1);
 	    }
@@ -547,7 +547,7 @@ main(int argc, char **argv)
 	    loop_mode = TRUE;
 	    break;
 
-    	case 'S':
+	case 'S':
 	    oflags |= O_SYNC;
 	    break;
 
@@ -555,20 +555,20 @@ main(int argc, char **argv)
 #ifdef O_DIRECT
 	    oflags |= O_DIRECT;
 #else
-    	    fprintf(stderr, "%s: O_DIRECT not implemented on this platform, failing\n",
+	    fprintf(stderr, "%s: O_DIRECT not implemented on this platform, failing\n",
 	    	    argv0);
 	    exit(1);
 #endif /*O_DIRECT*/
 	    break;
 
-    	case 'M':
+	case 'M':
 	    mmap_flag = TRUE;
 	    break;
 
-    	case 'b':
+	case 'b':
 	    if (!parse_length(args_value(&as), &bsize))
 	    {
-    		fprintf(stderr, "%s: cannot parse blocksize \"%s\"\n",
+		fprintf(stderr, "%s: cannot parse blocksize \"%s\"\n",
 		    	argv0, args_value(&as));
 		exit(1);
 	    }
@@ -577,7 +577,7 @@ main(int argc, char **argv)
 	case 'T':
 	    if (!parse_tag(args_value(&as), &tag))
 	    {
-    		fprintf(stderr, "%s: cannot parse tag \"%s\"\n",
+		fprintf(stderr, "%s: cannot parse tag \"%s\"\n",
 		    	argv0, args_value(&as));
 		exit(1);
 	    }
@@ -662,7 +662,7 @@ main(int argc, char **argv)
     {
 	if (!port)
 	    port = DEFAULT_PORT;
-    	stream = stream_server_open(protocol, port, xflags, bsize);
+	stream = stream_server_open(protocol, port, xflags, bsize);
 	if (stream == 0)
 	    exit(1);	    /* error printed at lower level in stream.c */
 	if (have_seek && stream_seek(stream, seek) < 0)
@@ -671,7 +671,7 @@ main(int argc, char **argv)
     }
     else if (filter_mode)
     {
-    	stream = stream_unix_dopen(fileno(stdin), oflags, xflags, bsize);
+	stream = stream_unix_dopen(fileno(stdin), oflags, xflags, bsize);
 	if (stream == 0)
 	    exit(1);	    /* error printed at lower level in stream.c */
 	if (have_seek && stream_seek(stream, seek) < 0)
@@ -680,7 +680,7 @@ main(int argc, char **argv)
     }
     else
     {
-    	struct stat64 sb;
+	struct stat64 sb;
 
 	do
 	{
