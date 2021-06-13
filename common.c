@@ -208,6 +208,28 @@ message(const char *fmt, ...)
     va_end(args);
 }
 
+
+/*
+ * A wrapper around write() which handles short writes.
+ * This is only here because modern gcc complains if
+ * we ignore the return value from write(), which is
+ * probably for the best.
+ */
+static ssize_t write_handling_shorts(int fd, const char *buf, size_t len)
+{
+    ssize_t nwritten = 0;
+    while (len > 0)
+    {
+        ssize_t r = write(fd, buf, len);
+        if (r < 0)
+            return (nwritten == 0 ? -1 : nwritten);
+        len -= r;
+        buf += r;
+        nwritten += r;
+    }
+    return nwritten;
+}
+
 static void _oom(void) __attribute__(( noreturn ));
 
 static void
@@ -216,8 +238,8 @@ _oom(void)
     static const char msg[] = ": failed to allocate memory, exiting\n";
     fflush(stderr);
     /* not using fprintf() to avoid it needing to allocate memory */
-    write(2, argv0, strlen(argv0));
-    write(2, msg, sizeof(msg)-1);
+    write_handling_shorts(2, argv0, strlen(argv0));
+    write_handling_shorts(2, msg, sizeof(msg)-1);
     exit(1);
 }
 
@@ -266,7 +288,7 @@ creator_to_timestamp_str(uint64_t creator)
     time_t sec = creator_get_seconds(creator);
     unsigned int millisec = creator_get_milliseconds(creator);
     const struct tm *tm = localtime(&sec);
-    static char buf[35];
+    static char buf[96];
 
 #ifdef __GLIBC__
     snprintf(buf, sizeof(buf)-1, "%04d/%02d/%02d %02d:%02d:%02d.%03d %s",
