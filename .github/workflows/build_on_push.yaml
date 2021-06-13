@@ -21,3 +21,15 @@ jobs:
               run: ./configure
             - name: Build
               run: make
+    macos-latest:
+        name: macos-latest
+        runs-on: macos-latest
+        steps:
+            - name: Prepare development environment
+              run: echo hello world... brew install autoconf automake make
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Configure
+              run: ./configure
+            - name: Build
+              run: make
