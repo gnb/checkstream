@@ -26,7 +26,7 @@ jobs:
         runs-on: macos-latest
         steps:
             - name: Prepare development environment
-              run: echo hello world... brew install autoconf automake make
+              run: echo nothing to see here
             - name: Check out repository
               uses: actions/checkout@v2
             - name: Configure
