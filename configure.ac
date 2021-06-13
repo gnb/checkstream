@@ -23,7 +23,7 @@ dnl
 AC_INIT(checkstream, 1.0)
 AC_CONFIG_SRCDIR(checkstream.c)
 AM_INIT_AUTOMAKE()
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 AM_MAINTAINER_MODE
 
@@ -48,7 +48,8 @@ dnl AC_CHECK_FUNCS(putenv regcomp strchr)
 dnl AC_SUBST(ALL_LINGUAS)
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
-AC_OUTPUT([
+AC_CONFIG_FILES([
     Makefile
 ])
+AC_OUTPUT
 dnl intl/Makefile po/Makefile.in

@@ -3,10 +3,11 @@ Makefile
 *.o
 checkstream
 genstream
+compile
 config.h
 config.log
 config.status
 stamp-h1
 COPYING
 autom4te.cache
-
+*~
