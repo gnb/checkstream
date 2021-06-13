@@ -14,7 +14,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Prepare development environment
-              run: apt-get install autoconf automake make
+              run: sudo apt-get install autoconf automake make
             - name: Check out repository
               uses: actions/checkout@v2
             - name: Configure
