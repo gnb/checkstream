@@ -13,4 +13,11 @@ jobs:
         name: ubuntu-latest
         runs-on: ubuntu-latest
         steps:
-            - run: echo hello world
+            - name: Prepare development environment
+              run: apt-get install autoconf automake make
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Configure
+              run: ./configure
+            - name: Build
+              run: make
