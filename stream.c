@@ -529,7 +529,7 @@ stream_client_open(const char *hostname, int protocol, int port,
 
     if (connect(sock, (struct sockaddr *)&sin, sizeof(sin)) < 0)
     {
-	perrorf(hostname);
+	perrorf("host %s", hostname);
 	close(sock);
 	return 0;
     }
