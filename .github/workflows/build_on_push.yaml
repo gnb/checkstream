@@ -1,0 +1,16 @@
+#
+# GitHub Actions workflow to check that
+# pushed code builds on all supported platforms.
+#
+# Copyright (c) 2021 Greg Banks <gnb@fmeh.org>
+#
+name: build_on_push
+on:
+    push:
+        branches: [ actions-experiment ]
+jobs:
+    ubuntu-latest:
+        name: ubuntu-latest
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo hello world
