@@ -23,6 +23,12 @@ jobs:
               run: make
             - name: Test
               run: make check
+            - uses: actions/upload-artifact@v2
+              with:
+                name: test-logs
+                path: |
+                    tests/test-suite.log
+                    tests/t*.sh.log
     macos-latest:
         name: macos-latest
         runs-on: macos-latest
