@@ -21,6 +21,8 @@ jobs:
               run: ./configure
             - name: Build
               run: make
+            - name: Test
+              run: make check
     macos-latest:
         name: macos-latest
         runs-on: macos-latest
@@ -33,3 +35,5 @@ jobs:
               run: ./configure
             - name: Build
               run: make
+            - name: Test
+              run: make check
