@@ -26,7 +26,7 @@ jobs:
             - uses: actions/upload-artifact@v2
               if: failure()
               with:
-                name: test-logs
+                name: ubuntu-test-logs
                 path: |
                     tests/test-suite.log
                     tests/t*.sh.log
@@ -44,3 +44,10 @@ jobs:
               run: make
             - name: Test
               run: make check
+            - uses: actions/upload-artifact@v2
+              if: failure()
+              with:
+                name: macos-test-logs
+                path: |
+                    tests/test-suite.log
+                    tests/t*.sh.log
