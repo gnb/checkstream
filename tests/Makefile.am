@@ -1,6 +1,5 @@
 #
-# Copyright (c) 2004-2009 Silicon Graphics, Inc. All rights reserved.
-#         By Greg Banks <gnb@sgi.com>
+# Tests Copyright (c) 2021 Greg Banks <gnb@fmeh.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,17 +16,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-SUBDIRS=        tests
-bin_PROGRAMS=	genstream checkstream
-
-COMMON= common.c common.h stream.c stream.h
-
-genstream_SOURCES=	genstream.c $(COMMON)
-
-checkstream_SOURCES=	checkstream.c panic.c panic.h $(COMMON)
-
-AM_CPPFLAGS =	-D_LARGEFILE64_SOURCE
-
-man_MANS=	genstream.1 checkstream.1
-EXTRA_DIST=	$(man_MANS)
-
+TESTS=              tbasic.sh
+EXTRA_DIST=         $(TESTS)
+LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh

@@ -22,6 +22,7 @@ dnl
 
 AC_INIT(checkstream, 1.0)
 AC_CONFIG_SRCDIR(checkstream.c)
+AC_CONFIG_AUX_DIR([autotools.aux.d])
 AM_INIT_AUTOMAKE()
 AC_CONFIG_HEADERS(config.h)
 
@@ -50,6 +51,8 @@ AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 AC_CONFIG_FILES([
     Makefile
+    tests/Makefile
 ])
+AC_REQUIRE_AUX_FILE([tap-driver.sh])
 AC_OUTPUT
 dnl intl/Makefile po/Makefile.in
