@@ -27,6 +27,8 @@ _EXIT_SKIP=77
 _EXIT_HARDFAIL=99
 _EXIT_PASS=0
 
+_HOST_OS=$(uname -s)
+
 # automake allows us to mark a test as hard failed using exit code 99
 function hardfail()
 {
@@ -58,7 +60,11 @@ function pass()
 function file_size()
 {
     local file="$1"
-    stat -f %z "$file"
+    case "$_HOST_OS" in
+    Linux) stat -c %s "$file" ;;
+    Darwin) stat -f %z "$file" ;;
+    *) hardfail "no implementation of file_size for this platform" ;;
+    esac
 }
 
 function init_subtests()
