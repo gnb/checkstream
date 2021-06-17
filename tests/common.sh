@@ -121,6 +121,17 @@ function next_subtest()
     return 0
 }
 
+function assert_success()
+{
+    eval "$@" || fail "$* failed unexpectedly"
+}
+
+function assert_failure()
+{
+    eval "$@" && fail "$* succeeded unexpectedly"
+}
+
+
 GENSTREAM="../genstream"
 CHECKSTREAM="../checkstream"
 
