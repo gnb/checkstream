@@ -10,3 +10,6 @@ stamp-h1
 COPYING
 autom4te.cache
 *~
+*.gcda
+*.gcno
+build/

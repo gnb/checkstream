@@ -1007,6 +1007,17 @@ uninstall-man: uninstall-man1
 .PRECIOUS: Makefile
 
 
+coverage:
+	$(MAKE) clean
+	$(MAKE) AM_CFLAGS="--coverage" AM_LDFLAGS="--coverage" all
+	lcov -c -i -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/base.info
+	$(MAKE) check
+	lcov -c -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/tests.info
+	lcov -a tests/base.info -a tests/tests.info -o tests/total.info
+	lcov --summary tests/total.info
+	mkdir -p build/report/coverage
+	genhtml -o build/report/coverage tests/total.info
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

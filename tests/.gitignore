@@ -1,3 +1,6 @@
 t*.sh.log
 t*.sh.trs
 test-suite.log
+base.info
+tests.info
+total.info

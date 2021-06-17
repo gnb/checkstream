@@ -31,3 +31,13 @@ AM_CPPFLAGS =	-D_LARGEFILE64_SOURCE
 man_MANS=	genstream.1 checkstream.1
 EXTRA_DIST=	$(man_MANS)
 
+coverage:
+	$(MAKE) clean
+	$(MAKE) AM_CFLAGS="--coverage" AM_LDFLAGS="--coverage" all
+	lcov -c -i -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/base.info
+	$(MAKE) check
+	lcov -c -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/tests.info
+	lcov -a tests/base.info -a tests/tests.info -o tests/total.info
+	lcov --summary tests/total.info
+	mkdir -p build/report/coverage
+	genhtml -o build/report/coverage tests/total.info
