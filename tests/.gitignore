@@ -5,3 +5,4 @@ test-suite.log
 base.info
 tests.info
 total.info
+t*.*.dat

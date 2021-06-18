@@ -165,6 +165,12 @@ function assert_file_exists()
     [ -f "$f" ] || fail "file $f doesn't exist"
 }
 
+function assert_file_does_not_exist()
+{
+    local f="$1"
+    [ -f "$f" ] && fail "file $f exists unexpectedly"
+}
+
 function _size_to_bytes()
 {
     case "$1" in

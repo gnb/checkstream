@@ -64,7 +64,7 @@ function testZeroRecord()
 {
     local offset="$1"
     f=tcheckerrors.zerorecord.$offset.dat
-    /bin/rm $f
+    /bin/rm -f $f
 
     assert_success $GENSTREAM 1024 $f
     assert_file_exists $f
@@ -76,6 +76,22 @@ function testZeroRecord()
 
     assert_failure $CHECKSTREAM $f
     assert_logged "zero data for 8 bytes at offset $offset"
+}
+
+param_testBadTag="-1 256 123456789 x foo"
+
+function testBadTag()
+{
+    local tag="$1"
+    f=tcheckerrors.badTag.$tag.dat
+    /bin/rm -f $f
+
+    assert_failure $GENSTREAM -T $tag 1024 $f
+    assert_file_does_not_exist $f
+    assert_logged "cannot parse tag \"$tag\""
+
+    assert_failure $CHECKSTREAM -T $tag $f
+    assert_logged "cannot parse tag \"$tag\""
 }
 
 run_subtests
