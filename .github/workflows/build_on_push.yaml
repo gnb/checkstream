@@ -11,7 +11,10 @@ on:
 jobs:
     build-and-test:
         name: Build And Test
-        runs-on: [ubuntu-latest, macos-latest]
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+        runs-on: ${{ matrix.os }}
         steps:
             - name: Prepare Linux Development Environment
               if: ${{ runner.os == 'Linux' }}
@@ -31,7 +34,7 @@ jobs:
               uses: actions/upload-artifact@v2
               if: failure()
               with:
-                name: ${{ runner.os }}-test-logs
+                name: ${{ matrix.os }}-test-logs
                 path: |
                     tests/test-suite.log
                     tests/t*.sh.log
