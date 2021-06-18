@@ -19,37 +19,23 @@
 
 . common.sh
 
-# 8 bytes is the smallest working length for a stream
-init_subtests \
-    8 16 128 512 1K 4K 32K 128K 1M
-
-function size_to_bytes()
-{
-    case "$1" in
-    *[kK]) echo $[ ${1%[kK]} << 10 ] ;;
-    *[mM]) echo $[ ${1%[mM]} << 20 ] ;;
-    *[gG]) echo $[ ${1%[gG]} << 30 ] ;;
-    *[tT]) echo $[ ${1%[tT]} << 40 ] ;;
-    *[pP]) echo $[ ${1%[pP]} << 50 ] ;;
-    *) echo "$1" ;;
-    esac
-}
-
 function tearDown()
 {
     /bin/rm -f tbasic.$SUBTEST.dat
 }
 
-function tbasic()
+# 8 bytes is the smallest working length for a stream
+param_testBasic="8 16 128 512 1K 4K 32K 128K 1M"
+
+function testBasic()
 {
-    f=tbasic.$SUBTEST.dat
+    local size="$1"
+    f=tbasic.$size.dat
     /bin/rm -f $f
-    $GENSTREAM $SUBTEST $f || fail "genstream failed"
-    [ -f $f ] || fail "file $f doesn't exist"
-    [ `file_size $f` = `size_to_bytes $SUBTEST` ]  || fail "size of file $f is unexpected"
-    $CHECKSTREAM $f || fail "checkstream failed"
+    assert_success $GENSTREAM $size $f
+    assert_file_exists $f
+    assert_file_size_equals $f $size
+    assert_success $CHECKSTREAM $f
 }
 
-while next_subtest -D tearDown tbasic ; do
-    :
-done
+run_subtests

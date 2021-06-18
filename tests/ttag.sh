@@ -19,14 +19,12 @@
 
 . common.sh
 
-init_subtests 1
-
 function tearDown()
 {
     /bin/rm -f ttag.*.dat
 }
 
-function ttag()
+function testTag()
 {
     size=4096
     f=ttag.notag.dat
@@ -35,30 +33,37 @@ function ttag()
     /bin/rm -f $f $f1 $f2
 
     assert_success $GENSTREAM $size $f
-    [ -f $f ] || fail "file $f doesn't exist"
-    [ `file_size $f` = $size ]  || fail "size of file $f is unexpected"
+    assert_file_exists $f
+    assert_file_size_equals $f $size
 
     assert_success $GENSTREAM -T1 $size $f1
-    [ -f $f1 ] || fail "file $f1 doesn't exist"
-    [ `file_size $f1` = $size ]  || fail "size of file $f1 is unexpected"
+    assert_file_exists $f1
+    assert_file_size_equals $f1 $size
 
     assert_success $GENSTREAM -T2 $size $f2
-    [ -f $f2 ] || fail "file $f2 doesn't exist"
-    [ `file_size $f2` = $size ]  || fail "size of file $f2 is unexpected"
+    assert_file_exists $f2
+    assert_file_size_equals $f2 $size
 
     assert_success $CHECKSTREAM $f
+    assert_logged "valid data for $size bytes at offset 0"
     assert_failure $CHECKSTREAM -T1 $f
+    assert_logged "bad tag for $size bytes at offset 0"
     assert_failure $CHECKSTREAM -T2 $f
+    assert_logged "bad tag for $size bytes at offset 0"
 
     assert_failure $CHECKSTREAM $f1
+    assert_logged "bad offset for $size bytes at offset 0"
     assert_success $CHECKSTREAM -T1 $f1
+    assert_logged "valid data for $size bytes at offset 0"
     assert_failure $CHECKSTREAM -T2 $f1
+    assert_logged "bad tag for $size bytes at offset 0"
 
     assert_failure $CHECKSTREAM $f2
+    assert_logged "bad offset for $size bytes at offset 0"
     assert_failure $CHECKSTREAM -T1 $f2
+    assert_logged "bad tag for $size bytes at offset 0"
     assert_success $CHECKSTREAM -T2 $f2
+    assert_logged "valid data for $size bytes at offset 0"
 }
 
-while next_subtest -D tearDown ttag ; do
-    :
-done
+run_subtests

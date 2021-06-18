@@ -30,8 +30,8 @@ function testShort()
     f7=tcheckerrors.short7.dat
 
     assert_success $GENSTREAM 8 $f8
-    [ -f $f8 ] || fail "file $f8 doesn't exist"
-    [ `file_size $f8` = 8 ]  || fail "size of file $f8 is unexpected"
+    assert_file_exists $f8
+    assert_file_size_equals $f8 8
 
     dd if=$f8 of=$f7 bs=1 count=7
 
@@ -47,8 +47,8 @@ function testUnaligned()
     fU=tcheckerrors.unaligned.dat
 
     assert_success $GENSTREAM 16 $fA
-    [ -f $fA ] || fail "file $fA doesn't exist"
-    [ `file_size $fA` = 16 ]  || fail "size of file $fA is unexpected"
+    assert_file_exists $fA
+    assert_file_size_equals $fA 16
 
     dd if=$fA of=$fU bs=1 count=15
 
@@ -58,23 +58,24 @@ function testUnaligned()
 }
 
 
+param_testZeroRecord="0 8 16 128 1016"
+
 function testZeroRecord()
 {
-    f=tcheckerrors.zerorecord.dat
+    local offset="$1"
+    f=tcheckerrors.zerorecord.$offset.dat
+    /bin/rm $f
 
-    for offset in 0 8 16 128 1016 ; do
+    assert_success $GENSTREAM 1024 $f
+    assert_file_exists $f
+    assert_file_size_equals $f 1024
 
-        assert_success $GENSTREAM 1024 $f
-        [ -f $f ] || fail "file $f doesn't exist"
-        [ `file_size $f` = 1024 ]  || fail "size of file $f is unexpected"
+    assert_success $CHECKSTREAM $f
 
-        assert_success $CHECKSTREAM $f
+    dd if=/dev/zero of=$f bs=1 count=8 conv=notrunc seek=$offset
 
-        dd if=/dev/zero of=$f bs=1 count=8 conv=notrunc seek=$offset
-
-        assert_failure $CHECKSTREAM $f
-        assert_logged "zero data for 8 bytes at offset $offset"
-    done
+    assert_failure $CHECKSTREAM $f
+    assert_logged "zero data for 8 bytes at offset $offset"
 }
 
 run_subtests

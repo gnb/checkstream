@@ -19,14 +19,12 @@
 
 . common.sh
 
-init_subtests 1
-
 function tearDown()
 {
     /bin/rm -f tmmap.*.dat
 }
 
-function tmmap()
+function testMmap()
 {
     size=16384
     f=tmmap.noM.dat
@@ -34,12 +32,12 @@ function tmmap()
     /bin/rm -f $f $fM
 
     assert_success $GENSTREAM $size $f
-    [ -f $f ] || fail "file $f doesn't exist"
-    [ `file_size $f` = $size ]  || fail "size of file $f is unexpected"
+    assert_file_exists $f
+    assert_file_size_equals $f $size
 
     assert_success $GENSTREAM -M $size $fM
-    [ -f $fM ] || fail "file $fM doesn't exist"
-    [ `file_size $fM` = $size ]  || fail "size of file $fM is unexpected"
+    assert_file_exists $fM
+    assert_file_size_equals $fM $size
 
     # Writing with mmap makes no difference to the format
 
@@ -50,6 +48,4 @@ function tmmap()
     assert_success $CHECKSTREAM -M $fM
 }
 
-while next_subtest -D tearDown tmmap ; do
-    :
-done
+run_subtests

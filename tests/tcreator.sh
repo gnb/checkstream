@@ -19,14 +19,12 @@
 
 . common.sh
 
-init_subtests 1
-
 function tearDown()
 {
     /bin/rm -f tcreator.*.dat
 }
 
-function tcreator()
+function testCreator()
 {
     size=4096
     f=tcreator.noC.dat
@@ -35,16 +33,16 @@ function tcreator()
     /bin/rm -f $f $fC $fC2
 
     assert_success $GENSTREAM $size $f
-    [ -f $f ] || fail "file $f doesn't exist"
-    [ `file_size $f` = $size ]  || fail "size of file $f is unexpected"
+    assert_file_exists $f
+    assert_file_size_equals $f $size
 
     assert_success $GENSTREAM -C $size $fC
-    [ -f $fC ] || fail "file $fC doesn't exist"
-    [ `file_size $fC` = $size ]  || fail "size of file $fC is unexpected"
+    assert_file_exists $fC
+    assert_file_size_equals $fC $size
 
     assert_success $GENSTREAM -C $size $fC2
-    [ -f $fC2 ] || fail "file $fC2 doesn't exist"
-    [ `file_size $fC2` = $size ]  || fail "size of file $fC2 is unexpected"
+    assert_file_exists $fC2
+    assert_file_size_equals $fC2 $size
 
     assert_success $CHECKSTREAM $f
     assert_failure $CHECKSTREAM -C $f
@@ -59,6 +57,4 @@ function tcreator()
     assert_failure $CHECKSTREAM -C $fC2
 }
 
-while next_subtest -D tearDown tcreator ; do
-    :
-done
+run_subtests

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Tests Copyright (c) 2021 Greg Banks <gnb@fmeh.org>
 #
@@ -68,11 +69,6 @@ function file_size()
     esac
 }
 
-function init_subtests()
-{
-    SUBTESTS="$*"
-    echo "1..$#"
-}
 
 function _list_shell_functions()
 {
@@ -102,60 +98,52 @@ function _run_subtest()
     [ -n "$teardownfunc" ] && eval "$teardownfunc"
 }
 
-function next_subtest()
+function _params_for_subtest()
 {
-    local testfunc=
-    local setupfunc=
-    local teardownfunc=
-
-    while [ $# -gt 0 ] ; do
-        case "$1" in
-        -U) setupfunc="$2" ; shift ;;
-        -D) teardownfunc="$2" ; shift ;;
-        -*) hardfail "Unknown option $1 to next_subtest" ;;
-        *)
-            [ -z "$testfunc" ] || hardfail "multiple test functions in next_subtest"
-            testfunc="$1"
-            ;;
-        esac
-        shift
-    done
-
-    set - $SUBTESTS
-    [ $# -gt 0 ] || return 1
-    SUBTEST="$1"
-    if [ -z "$SUBTEST_INDEX" ] ; then
-        SUBTEST_INDEX=1
-    else
-        SUBTEST_INDEX=$[SUBTEST_INDEX+1]
+    local subtest="$1"
+    local var=$(declare | grep "^param_$subtest=" | cut -d= -f1)
+    if [ -n "$var" ] ; then
+        eval 'echo $'$var
     fi
-    shift
-    SUBTESTS="$*"
-
-    _run_subtest "$setupfunc" "$testfunc" "$teardownfunc"
-
-    return 0
 }
 
 function run_subtests()
 {
     local setupfunc=$(_list_shell_functions | egrep '^(setup|setUp)' | head -1)
     local teardownfunc=$(_list_shell_functions | egrep '^(teardown|tearDown)' | head -1)
+    local params=
 
     SUBTESTS=$(_list_shell_functions | grep '^test')
 
-    # count the subtests and emit the TAP header
+    # count the subtest instances and emit the TAP header
     n=0
-    for t in $SUBTESTS ; do
-        n=$[n+1]
+    for st in $SUBTESTS ; do
+        params=$(_params_for_subtest $st)
+        if [ -z "$params" ] ; then
+            n=$[n+1]
+        else
+            for p in $params ; do
+                n=$[n+1]
+            done
+        fi
     done
     echo "1..$n"
 
-    # run all the tests in order
+    # run all the subtests in order
     SUBTEST_INDEX=1
-    for SUBTEST in $SUBTESTS ; do
-        _run_subtest "$setupfunc" $SUBTEST "$teardownfunc"
-        SUBTEST_INDEX=$[SUBTEST_INDEX+1]
+    for testfunc in $SUBTESTS ; do
+        params=$(_params_for_subtest $testfunc)
+        if [ -z "$params" ] ; then
+            SUBTEST=$testfunc
+            _run_subtest "$setupfunc" "$testfunc" "$teardownfunc"
+            SUBTEST_INDEX=$[SUBTEST_INDEX+1]
+        else
+            for p in $params ; do
+                SUBTEST="$testfunc.$p"
+                _run_subtest "$setupfunc" "$testfunc $p" "$teardownfunc"
+                SUBTEST_INDEX=$[SUBTEST_INDEX+1]
+            done
+        fi
     done
 }
 
@@ -169,6 +157,32 @@ function assert_failure()
 {
     set -o pipefail
     eval "$@ 2>&1 | tee $_SUBTEST_LOG" && fail "$* succeeded unexpectedly"
+}
+
+function assert_file_exists()
+{
+    local f="$1"
+    [ -f "$f" ] || fail "file $f doesn't exist"
+}
+
+function _size_to_bytes()
+{
+    case "$1" in
+    *[kK]) echo $[ ${1%[kK]} << 10 ] ;;
+    *[mM]) echo $[ ${1%[mM]} << 20 ] ;;
+    *[gG]) echo $[ ${1%[gG]} << 30 ] ;;
+    *[tT]) echo $[ ${1%[tT]} << 40 ] ;;
+    *[pP]) echo $[ ${1%[pP]} << 50 ] ;;
+    *) echo "$1" ;;
+    esac
+}
+
+function assert_file_size_equals()
+{
+    local f="$1"
+    local expected_size=$(_size_to_bytes "$2")
+    local actual_size=$(file_size "$f")
+    [ "$actual_size" = "$expected_size" ]  || fail "size of file $f is $actual_size, expecting $expected_size"
 }
 
 function assert_logged()
