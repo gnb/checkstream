@@ -9,32 +9,15 @@ on:
     push:
         branches: [ actions-experiment ]
 jobs:
-    ubuntu-latest:
-        name: ubuntu-latest
-        runs-on: ubuntu-latest
+    build-and-test:
+        name: Build And Test
+        runs-on: [ubuntu-latest, macos-latest]
         steps:
-            - name: Prepare development environment
+            - name: Prepare Linux Development Environment
+              if: ${{ runner.os == 'Linux' }}
               run: sudo apt-get install autoconf automake make
-            - name: Check out repository
-              uses: actions/checkout@v2
-            - name: Configure
-              run: ./configure
-            - name: Build
-              run: make
-            - name: Test
-              run: make check
-            - uses: actions/upload-artifact@v2
-              if: failure()
-              with:
-                name: ubuntu-test-logs
-                path: |
-                    tests/test-suite.log
-                    tests/t*.sh.log
-    macos-latest:
-        name: macos-latest
-        runs-on: macos-latest
-        steps:
-            - name: Prepare development environment
+            - name: Prepare MacOS Development Environment
+              if: ${{ runner.os == 'macOS' }}
               run: echo nothing to see here
             - name: Check out repository
               uses: actions/checkout@v2
@@ -44,10 +27,11 @@ jobs:
               run: make
             - name: Test
               run: make check
-            - uses: actions/upload-artifact@v2
+            - name: Upload Test Logs If Failed
+              uses: actions/upload-artifact@v2
               if: failure()
               with:
-                name: macos-test-logs
+                name: ${{ runner.os }}-test-logs
                 path: |
                     tests/test-suite.log
                     tests/t*.sh.log
