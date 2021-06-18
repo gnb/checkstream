@@ -87,13 +87,12 @@ function _run_subtest()
     local teardownfunc="$3"
 
     [ -n "$setupfunc" ] && eval "$setupfunc"
-    /bin/rm -f $_SUBTEST_LOG
     _RESULT=
     ( 
         _IN_SUBSHELL=yes
         eval "$testfunc"
         pass
-    ) 2>&1 | tee $_SUBTEST_LOG
+    )
     case "$?" in
     $_EXIT_PASS) _RESULT=pass ;;
     $_EXIT_SKIP) _RESULT=skip ;;
@@ -162,12 +161,14 @@ function run_subtests()
 
 function assert_success()
 {
-    eval "$@" || fail "$* failed unexpectedly"
+    set -o pipefail
+    eval "$@ 2>&1 | tee $_SUBTEST_LOG" || fail "$* failed unexpectedly"
 }
 
 function assert_failure()
 {
-    eval "$@" && fail "$* succeeded unexpectedly"
+    set -o pipefail
+    eval "$@ 2>&1 | tee $_SUBTEST_LOG" && fail "$* succeeded unexpectedly"
 }
 
 function assert_logged()
