@@ -16,6 +16,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh
+TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh
 EXTRA_DIST=         $(TESTS)
 LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh

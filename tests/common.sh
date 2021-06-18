@@ -26,6 +26,7 @@ _IN_SUBSHELL=no
 _EXIT_SKIP=77
 _EXIT_HARDFAIL=99
 _EXIT_PASS=0
+_SUBTEST_LOG="subtest.log"
 
 _HOST_OS=$(uname -s)
 
@@ -73,6 +74,35 @@ function init_subtests()
     echo "1..$#"
 }
 
+function _list_shell_functions()
+{
+    declare -F | awk '{print $3}' | LANG=C sort
+}
+
+
+function _run_subtest()
+{
+    local setupfunc="$1"
+    local testfunc="$2"
+    local teardownfunc="$3"
+
+    [ -n "$setupfunc" ] && eval "$setupfunc"
+    /bin/rm -f $_SUBTEST_LOG
+    _RESULT=
+    ( 
+        _IN_SUBSHELL=yes
+        eval "$testfunc"
+        pass
+    ) 2>&1 | tee $_SUBTEST_LOG
+    case "$?" in
+    $_EXIT_PASS) _RESULT=pass ;;
+    $_EXIT_SKIP) _RESULT=skip ;;
+    $_EXIT_HARDFAIL) exit $_EXIT_HARDFAIL ;;
+    *) RESULT=fail ;;
+    esac
+    [ -n "$teardownfunc" ] && eval "$teardownfunc"
+}
+
 function next_subtest()
 {
     local testfunc=
@@ -103,22 +133,31 @@ function next_subtest()
     shift
     SUBTESTS="$*"
 
-    [ -n "$setupfunc" ] && eval "$setupfunc"
-    _RESULT=
-    ( 
-        _IN_SUBSHELL=yes
-        eval "$testfunc"
-        pass
-    )
-    case "$?" in
-    $_EXIT_PASS) _RESULT=pass ;;
-    $_EXIT_SKIP) _RESULT=skip ;;
-    $_EXIT_HARDFAIL) exit $_EXIT_HARDFAIL ;;
-    *) RESULT=fail ;;
-    esac
-    [ -n "$teardownfunc" ] && eval "$teardownfunc"
+    _run_subtest "$setupfunc" "$testfunc" "$teardownfunc"
 
     return 0
+}
+
+function run_subtests()
+{
+    local setupfunc=$(_list_shell_functions | egrep '^(setup|setUp)' | head -1)
+    local teardownfunc=$(_list_shell_functions | egrep '^(teardown|tearDown)' | head -1)
+
+    SUBTESTS=$(_list_shell_functions | grep '^test')
+
+    # count the subtests and emit the TAP header
+    n=0
+    for t in $SUBTESTS ; do
+        n=$[n+1]
+    done
+    echo "1..$n"
+
+    # run all the tests in order
+    SUBTEST_INDEX=1
+    for SUBTEST in $SUBTESTS ; do
+        _run_subtest "$setupfunc" $SUBTEST "$teardownfunc"
+        SUBTEST_INDEX=$[SUBTEST_INDEX+1]
+    done
 }
 
 function assert_success()
@@ -131,6 +170,12 @@ function assert_failure()
     eval "$@" && fail "$* succeeded unexpectedly"
 }
 
+function assert_logged()
+{
+    local msg="$*"
+
+    fgrep "$msg" $_SUBTEST_LOG > /dev/null || fail "log doesn't contain string \"$msg\""
+}
 
 GENSTREAM="../genstream"
 CHECKSTREAM="../checkstream"
