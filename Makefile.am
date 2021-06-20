@@ -41,3 +41,6 @@ coverage:
 	lcov --summary tests/total.info
 	mkdir -p build/report/coverage
 	genhtml -o build/report/coverage tests/total.info
+
+clean-local:
+	-/bin/rm -f *.gcno *.gcda

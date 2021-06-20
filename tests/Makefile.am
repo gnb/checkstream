@@ -19,3 +19,6 @@
 TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh
 EXTRA_DIST=         $(TESTS)
 LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh
+
+clean-local:
+	-for t in $(TESTS) ; do tb=`basename $$t .sh` ; /bin/rm -f $$tb.*.dat ; done
