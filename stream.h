@@ -18,6 +18,9 @@
  */
 #include <sys/fcntl.h>
 
+/* this define is used to hide code that isn't ever used without deleting it */
+#define STREAM_UNUSED 0
+
 typedef struct stream stream_t;
 typedef struct stream_ops stream_ops_t;
 
@@ -60,8 +63,10 @@ extern stream_t *stream_client_open(const char *hostname, int protocol,
 				    int port, int xflags, int bsize);
 extern stream_t *stream_server_open(int protocol, int port,
 				    int xflags, int bsize);
+#if STREAM_UNUSED
 extern int stream_read(stream_t *, char *buf, int len);
 extern int stream_write(stream_t *, char *buf, int len);
+#endif
 extern int stream_flush(stream_t *);
 extern int stream_seek(stream_t *, uint64_t);
 extern int stream_close(stream_t *);

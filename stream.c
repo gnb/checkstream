@@ -67,6 +67,7 @@ stream_pull(stream_t *s)
     return pulled;
 }
 
+#if STREAM_UNUSED
 int
 stream_read(stream_t *s, char *buf, int len)
 {
@@ -98,6 +99,7 @@ stream_read(stream_t *s, char *buf, int len)
 
     return ret;
 }
+#endif
 
 int
 stream_push(stream_t *s)
@@ -127,6 +129,7 @@ stream_seek(stream_t *s, uint64_t off)
     return (*s->ops->seek)(s, off);
 }
 
+#if STREAM_UNUSED
 int
 stream_write(stream_t *s, char *buf, int len)
 {
@@ -155,6 +158,7 @@ stream_write(stream_t *s, char *buf, int len)
 
     return ret;
 }
+#endif
 
 int
 stream_flush(stream_t *s)
