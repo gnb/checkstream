@@ -1,3 +1,4 @@
+#/bin/bash
 #
 # Tests Copyright (c) 2021 Greg Banks <gnb@fmeh.org>
 #
@@ -16,10 +17,17 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh \
-                    tstdio.sh
-EXTRA_DIST=         $(TESTS)
-LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh
+. common.sh
 
-clean-local:
-	-for t in $(TESTS) ; do tb=`basename $$t .sh` ; /bin/rm -f $$tb.*.dat ; done
+param_testStdio="128 4096 8192 16384"
+
+function testStdio()
+{
+    size="$1"
+
+    set -o pipefail
+
+    assert_success $GENSTREAM $size \| $CHECKSTREAM -l $size
+}
+
+run_subtests
