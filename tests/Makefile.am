@@ -17,7 +17,7 @@
 #
 
 TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh \
-                    tstdio.sh
+                    tstdio.sh ttcp.sh
 EXTRA_DIST=         $(TESTS)
 LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh
 

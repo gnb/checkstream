@@ -427,7 +427,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh \
-                    tstdio.sh
+                    tstdio.sh ttcp.sh
 
 EXTRA_DIST = $(TESTS)
 LOG_DRIVER = env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh
@@ -650,6 +650,13 @@ tcheckerrors.sh.log: tcheckerrors.sh
 tstdio.sh.log: tstdio.sh
 	@p='tstdio.sh'; \
 	b='tstdio.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ttcp.sh.log: ttcp.sh
+	@p='ttcp.sh'; \
+	b='ttcp.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

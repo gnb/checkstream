@@ -63,6 +63,7 @@ extern void perrorf(const char *fmt, ...) __attribute__(( format(printf,1,2) ));
 extern void fatal(const char *fmt, ...) __attribute__(( format(printf,1,2), noreturn ));
 extern void error(const char *fmt, ...) __attribute__(( format(printf,1,2) ));
 extern void message(const char *fmt, ...) __attribute__(( format(printf,1,2) ));
+extern ssize_t write_handling_shorts(int fd, const char *buf, size_t len);
 extern void *xmalloc(size_t sz) __attribute__(( malloc ));
 extern char *xstrdup(const char *s) __attribute__(( malloc ));
 extern void *xvalloc(size_t sz) __attribute__(( malloc ));
@@ -154,6 +155,8 @@ typedef union
 #define RECORD_MASK_CREATOR	0xfULL
 
 #define DEFAULT_PORT	5000
+/* special value indicating we'll let the kernel choose a port */
+#define DYNAMIC_PORT	0
 
 /*
  * Time functions for dealing with timevals (microseconds

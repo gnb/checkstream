@@ -62,7 +62,8 @@ extern stream_t *stream_unix_dopen(int fd, int oflags, int xflags, uint64_t bsiz
 extern stream_t *stream_client_open(const char *hostname, int protocol,
 				    int port, int xflags, int bsize);
 extern stream_t *stream_server_open(int protocol, int port,
-				    int xflags, int bsize);
+				    int xflags, int bsize,
+                                    const char *port_filename);
 #if STREAM_UNUSED
 extern int stream_read(stream_t *, char *buf, int len);
 extern int stream_write(stream_t *, char *buf, int len);

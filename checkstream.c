@@ -399,7 +399,7 @@ static const char usage_str[] =
 "Usage: checkstream [options] --length=SIZE < file\n"
 "       checkstream [options] [--loop] file\n"
 "       checkstream [options] --seek=SIZE --length=SIZE file\n"
-"       checkstream [options] --protocol=tcp\n"
+"       checkstream [options] --protocol=tcp --length NUM [--port=PORT]\n"
 "options:\n"
 "    -v, --verbose              emit more messages (repeat for more messages)\n"
 "    -l SIZE, --length=SIZE     check only the given length of data for filter mode\n"
@@ -413,6 +413,9 @@ static const char usage_str[] =
 "    -o SIZE, --offset=SIZE     set expected offset of start of stream\n"
 "    -T NUM, --tag=N            expect given 8-bit tag value in stream (default 0)\n"
 "    --kernel-dump-on-error     trigger a kernel panic and dump on detecting an error\n"
+"    -p PORT, --port=PORT       use PORT in TCP mode, default 5000. Use \"dynamic\"\n"
+"                               to allow kernel to choose a port\n"
+"    --port-filename=FILE       write TCP port used to FILE\n"
 "SIZE arguments may be specified as nnn[KMGT]\n"
 ;
 
@@ -441,6 +444,7 @@ static const struct option longopts[] =
     {"tag",			required_argument,  NULL, 'T'},
     {"protocol",		required_argument,  NULL, 'P'},
     {"port",			required_argument,  NULL, 'p'},
+    {"port-filename",		required_argument,  NULL, ARGS_NOSHORT(2)},
     {"version",			no_argument,	    NULL, 'V'},
     {0, 0, 0, 0}
 };
@@ -463,7 +467,8 @@ main(int argc, char **argv)
     bool_t have_offset = FALSE;
     int c;
     int protocol = 0;
-    uint16_t port = 0;
+    uint16_t port = DEFAULT_PORT;
+    const char *port_filename = 0;
     stream_t *stream;
 
 #ifdef O_LARGEFILE
@@ -575,9 +580,15 @@ main(int argc, char **argv)
 	    break;
 
 	case 'p':
-	    if (!parse_tcp_port(optarg, &port))
+            if (!strcmp(optarg, "dynamic") || !strcmp(optarg, "0"))
+                port = DYNAMIC_PORT;
+	    else if (!parse_tcp_port(optarg, &port))
 		fatal("cannot parse port \"%s\"", optarg);
 	    break;
+
+	case ARGS_NOSHORT(2):
+            port_filename = optarg;
+            break;
 
 	case 'V':
 	    fputs("checkstream version " VERSION "\n", stdout);
@@ -615,8 +626,14 @@ main(int argc, char **argv)
     if (verbose)
     {
 	if (protocol)
-	    printf("%s: reading %s from tcp port %d\n",
-		    argv0, iec_sizestr(length, 0, 0), (int)port);
+        {
+            if (port == DYNAMIC_PORT)
+                printf("%s: reading %s from tcp port to be chosen by kernel\n",
+                        argv0, iec_sizestr(length, 0, 0));
+            else
+                printf("%s: reading %s from tcp port %d\n",
+                        argv0, iec_sizestr(length, 0, 0), (int)port);
+        }
 	else if (filter_mode)
 	    printf("%s: reading %s from standard input\n",
 		    argv0, iec_sizestr(length, 0, 0));
@@ -649,9 +666,7 @@ main(int argc, char **argv)
 
     if (protocol)
     {
-	if (!port)
-	    port = DEFAULT_PORT;
-	stream = stream_server_open(protocol, port, xflags, bsize);
+	stream = stream_server_open(protocol, port, xflags, bsize, port_filename);
 	if (stream == 0)
 	    exit(1);	    /* error printed at lower level in stream.c */
 	if (have_seek && stream_seek(stream, seek) < 0)

@@ -215,7 +215,7 @@ message(const char *fmt, ...)
  * we ignore the return value from write(), which is
  * probably for the best.
  */
-static ssize_t write_handling_shorts(int fd, const char *buf, size_t len)
+ssize_t write_handling_shorts(int fd, const char *buf, size_t len)
 {
     ssize_t nwritten = 0;
     while (len > 0)

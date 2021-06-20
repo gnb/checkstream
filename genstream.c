@@ -110,7 +110,7 @@ generate_stream(stream_t *st, uint64_t length, uint64_t seek)
 static const char usage_str[] =
 "Usage: genstream [options] SIZE file\n"
 "       genstream [options] SIZE > file\n"
-"       genstream [options] --protocol=tcp size host\n"
+"       genstream [options] --protocol=tcp [--port=PORT] size host\n"
 "options:\n"
 "    -S, --sync                 open files with O_SYNC\n"
 "    -D, --direct               open files with O_DIRECT\n"
@@ -123,6 +123,7 @@ static const char usage_str[] =
 "    -c, --close                close file descriptor after mmaping\n"
 "    -T NUM, --tag=N            generate given 8-bit tag value in stream\n"
 "    -C, --record-creator       record start time & pid in stream\n"
+"    -p PORT, --port=PORT       use PORT in TCP mode, default 5000\n"
 "SIZE arguments may be specified as nnn[KMGT]\n"
 ;
 

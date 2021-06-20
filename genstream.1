@@ -182,7 +182,7 @@ server% checkstream --protocol=tcp
 .PP
 and then connect to it with \fBgenstream\fP on the client:
 .Ex
-client% genstream --protocol=tcp client
+client% genstream --protocol=tcp server
 .Ee
 .\"
 .\" -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -257,8 +257,10 @@ socket and read stream records from it.
 .TP
 \fB\-p\fP \fIport\fP, \fB\-\-port=\fP\fIport\fP
 Set the TCP port used in \fB\-\-protocol=tcp\fP mode.  By default, port
-5000 is used.  To use multiple \fBcheckstream\fP instances on a single
-machine, unique ports should be chosen and specified with this option.
+5000 is used.  In checkstream, the value \fBdynamic\fP results in the kernel
+choosing an available port; this is most useful in combination with the
+\fB\-\-port\-filename\fP option.  To use multiple \fBcheckstream\fP instances
+on a single machine, unique ports should be chosen and specified with this option.
 .\"
 .SS Genstream Options
 .TP
@@ -308,6 +310,11 @@ read until the expected end of the file and report all errors found.
 Cause a kernel dump on first detected
 record error.  By default, \fBcheckstream\fP will read until the
 expected end of the file and report all errors found.
+.TP
+\fB\-\-port\-filename=\fP\fIfilename\fP
+In TCP server mode, write the TCP port being used to file \fIfilename\fP.
+This is most useful when using \fB\-\-port=dynamic\fP to allow the kernel
+to choose an available port.
 .\"
 .\" -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 .SH AUTHOR

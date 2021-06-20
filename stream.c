@@ -569,7 +569,7 @@ static stream_ops_t server_ops =
     unix_close
 };
 
-stream_t *stream_server_open(int protocol, int port, int xflags, int bsize)
+stream_t *stream_server_open(int protocol, int port, int xflags, int bsize, const char *port_filename)
 {
     struct sockaddr_in sin;
     socklen_t slen = sizeof(sin);
@@ -604,6 +604,30 @@ stream_t *stream_server_open(int protocol, int port, int xflags, int bsize)
 	return 0;
     }
 
+    if (port_filename != 0)
+    {
+        socklen_t addr_len = sizeof(sin);
+        int fd;
+        char portbuf[32];
+
+        if (getsockname(rsock, (struct sockaddr *)&sin, &addr_len) < 0)
+        {
+            perrorf("getsockname");
+            close(rsock);
+            return 0;
+        }
+        if ((fd = open(port_filename, O_WRONLY|O_CREAT|O_TRUNC, 0666)) < 0)
+        {
+            perrorf("port file %s", port_filename);
+            close(rsock);
+            return 0;
+        }
+        snprintf(portbuf, sizeof(portbuf), "%d", (int)ntohs(sin.sin_port));
+        portbuf[sizeof(portbuf)-1] = '\0';
+        write_handling_shorts(fd, portbuf, strlen(portbuf));
+        close(fd);
+    }
+
     if (listen(rsock, 5) < 0)
     {
 	perrorf("listen");
@@ -622,6 +646,7 @@ stream_t *stream_server_open(int protocol, int port, int xflags, int bsize)
 
     stream = stream_unix_dopen_1(inet_ntoa(sin.sin_addr), sock, O_RDONLY, xflags, bsize, TRUE);
     stream->ops = &server_ops;
+
     return stream;
 }
 
