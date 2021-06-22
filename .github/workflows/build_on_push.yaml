@@ -16,7 +16,7 @@ jobs:
                 os: [ubuntu-latest, macos-latest]
                 include:
                     - os: ubuntu-latest
-                       container: "fedora:33"
+                      container: "fedora:33"
         runs-on: ${{ matrix.os }}
         container: ${{ matrix.container }}
         steps:
