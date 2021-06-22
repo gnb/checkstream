@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #ifndef sgi
 #include <stdint.h>
+#include <stdbool.h>
 #endif
 #include <stdarg.h>
 #include <unistd.h>
@@ -52,10 +53,10 @@
 #endif
 
 
-extern int parse_length(const char *str, uint64_t *lengthp);
-extern int parse_tag(const char *str, uint8_t *tagp);
-extern int parse_protocol(const char *str, int *protp);
-extern int parse_tcp_port(const char *str, uint16_t *portp);
+extern bool parse_length(const char *str, uint64_t *lengthp);
+extern bool parse_tag(const char *str, uint8_t *tagp);
+extern bool parse_protocol(const char *str, int *protp);
+extern bool parse_tcp_port(const char *str, uint16_t *portp);
 /* compose and return a string in IEC standard notation e.g. 124KiB */
 extern char *iec_sizestr(uint64_t sz, char *buf, int maxlen);
 const char *tail(const char *);

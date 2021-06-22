@@ -22,94 +22,98 @@
 
 extern const char *argv0;
 
-int
+bool
 parse_length(const char *str, uint64_t *lengthp)
 {
     char *end = 0;
 
     if (str == 0 || *str == '\0')
-	return 0;
+	return false;
 
-    *lengthp = strtoull(str, &end, 0);
+    uint64_t n = strtoull(str, &end, 0);
     if (end == 0 || end == str)
-	return 0;   /* failed */
+	return false;
 
-    switch (*end)
+    int unit = *end++;
+    switch (unit)
     {
     case '\0':
-	return 1;
+        *lengthp = n;
+	return true;
     case 'b': case 'B':
 	/* "bb" or "BB" suffix: length in basic blocks (512 byte units) */
-	if (end[1] != end[0])
-	    return 0;
-	end++;
-	*lengthp <<= 9;
+	if (*end++ != unit)
+	    return false;
+	n <<= 9;
 	break;
     case 'k': case 'K':
-	*lengthp <<= 10;
+	n <<= 10;
 	break;
     case 'm': case 'M':
-	*lengthp <<= 20;
+	n <<= 20;
 	break;
     case 'g': case 'G':
-	*lengthp <<= 30;
+	n <<= 30;
 	break;
     case 't': case 'T':
-	*lengthp <<= 40;
+	n <<= 40;
 	break;
     default:
-	return 0;
+	return false;
     }
-    return (end[1] == '\0');
+    if (*end)
+        return false;
+    *lengthp = n;
+    return true;
 }
 
-int
+bool
 parse_tag(const char *str, uint8_t *tagp)
 {
     char *end = 0;
     unsigned long v;
 
     if (str == 0 || *str == '\0')
-	return 0;
+	return false;
 
     v = strtoul(str, &end, 0);
     if (end == 0 || *end != '\0' || end == str)
-	return 0;   /* failed */
+	return false;
     if (v > 255)
-	return 0;
+	return false;
     *tagp = (uint8_t)v;
-    return 1;
+    return true;
 }
 
-int
+bool
 parse_protocol(const char *str, int *protp)
 {
     if (str == 0 || *str == '\0')
-	return 0;
+	return false;
     if (!strcmp(str, "tcp"))
     {
 	*protp = IPPROTO_TCP;
-	return 1;
+	return true;
     }
-    return 0;
+    return false;
 }
 
-int
+bool
 parse_tcp_port(const char *str, uint16_t *portp)
 {
     char *end = 0;
     unsigned long v;
 
     if (str == 0 || *str == '\0')
-	return 0;
+	return false;
 
     v = strtoul(str, &end, 0);
     if (end == 0 || *end != '\0' || end == str)
-	return 0;   /* failed */
+	return false;
     if (v == 0 || v > 65535)
-	return 0;
+	return false;
     *portp = (uint16_t)v;
-    return 1;
+    return true;
 }
 
 char *
@@ -248,7 +252,7 @@ xmalloc(size_t sz)
 {
     void *x = malloc(sz);
     if (!x)
-	_oom();
+	_oom();         /* LCOV_EXCL_LINE */
     memset(x, 0, sz);
     return x;
 }
@@ -261,7 +265,7 @@ xstrdup(const char *s)
     if (!s)
 	return 0;
     if (!(x = strdup(s)))
-	_oom();
+	_oom();         /* LCOV_EXCL_LINE */
     return x;
 }
 
@@ -270,7 +274,7 @@ xvalloc(size_t sz)
 {
     void *x = valloc(sz);
     if (!x)
-	_oom();
+	_oom();         /* LCOV_EXCL_LINE */
     return x;
 }
 

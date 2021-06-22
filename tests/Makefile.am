@@ -17,9 +17,18 @@
 #
 
 TESTS=              tbasic.sh ttag.sh tcreator.sh tmmap.sh tcheckerrors.sh \
-                    tstdio.sh ttcp.sh
+                    tstdio.sh ttcp.sh c-unit-runner
 EXTRA_DIST=         $(TESTS)
 LOG_DRIVER=         env AM_TAP_AWK='$(AWK)' $(SHELL) $(top_srcdir)/autotools.aux.d/tap-driver.sh
+
+check_PROGRAMS=             c-unit-runner
+
+c_unit_runner_SOURCES=      c_unit_fw.c c_unit_fw.h \
+                            tcommon.c
+c_unit_runner_LDADD=        c_unit_tests.o $(top_srcdir)/common.o
+
+c_unit_tests.c: $(c_unit_runner_OBJECTS) c-unit-processor.sh
+	./c-unit-processor.sh -o $@ $(c_unit_runner_OBJECTS)
 
 clean-local:
 	-for t in $(TESTS) ; do tb=`basename $$t .sh` ; /bin/rm -f $$tb.*.dat ; done

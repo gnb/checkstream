@@ -1,8 +1,13 @@
 t*.sh.log
 t*.sh.trs
+c-unit-runner
+c-unit-runner.log
+c-unit-runner.trs
+c_unit_tests.c
 subtest.log
 test-suite.log
 base.info
 tests.info
 total.info
 t*.*.dat
+*.Po

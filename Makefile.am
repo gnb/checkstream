@@ -33,9 +33,8 @@ EXTRA_DIST=	$(man_MANS)
 
 coverage:
 	$(MAKE) clean
-	$(MAKE) AM_CFLAGS="--coverage" AM_LDFLAGS="--coverage" all
 	lcov -c -i -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/base.info
-	$(MAKE) check
+	$(MAKE) AM_CFLAGS="--coverage" AM_LDFLAGS="--coverage" all check
 	lcov -c -d $(srcdir) --include '$(abs_srcdir)/*.c' -o tests/tests.info
 	lcov -a tests/base.info -a tests/tests.info -o tests/total.info
 	lcov --summary tests/total.info
