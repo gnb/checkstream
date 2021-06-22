@@ -5,14 +5,11 @@ host_os=$(uname -s)
 
 case "$host_os" in
 Linux)
-    case "$(lsb_release -i)" in
-    Ubuntu*)
+    if [ -f /etc/ubuntu-release ] ; then
         sudo apt-get install autoconf automake make
-        ;;
-    Fedora*)
+    elif [ -f /etc/redhat-release ] ; then
         sudo yum install -y autoconf automake make
-        ;;
-    esac
+    fi
     ;;
 Darwin)
     echo "nothing to see here"
