@@ -13,19 +13,15 @@ jobs:
         name: Build And Test
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                container: ["fedora:33", "ubuntu:bionic"]
+                os: ubuntu-latest
                 include:
-                    - os: ubuntu-latest
-                      container: "fedora:33"
+                    - os: macos-latest
         runs-on: ${{ matrix.os }}
         container: ${{ matrix.container }}
         steps:
-            - name: Prepare Linux Development Environment
-              if: ${{ runner.os == 'Linux' }}
-              run: sudo apt-get install autoconf automake make
-            - name: Prepare MacOS Development Environment
-              if: ${{ runner.os == 'macOS' }}
-              run: echo nothing to see here
+            - name: Prepare development environment
+              run: ci/prepare-dev-environment.sh
             - name: Check out repository
               uses: actions/checkout@v2
             - name: Configure
@@ -34,7 +30,7 @@ jobs:
               run: make
             - name: Test
               run: make check
-            - name: Upload Test Logs If Failed
+            - name: Upload test logs if failed
               uses: actions/upload-artifact@v2
               if: failure()
               with:
