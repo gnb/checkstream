@@ -20,10 +20,10 @@ jobs:
         runs-on: ${{ matrix.os }}
         container: ${{ matrix.container }}
         steps:
-            - name: Prepare development environment
-              run: ci/prepare-dev-environment.sh
             - name: Check out repository
               uses: actions/checkout@v2
+            - name: Prepare development environment
+              run: ci/prepare-dev-environment.sh
             - name: Configure
               run: ./configure
             - name: Build
