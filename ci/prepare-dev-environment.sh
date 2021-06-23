@@ -13,13 +13,20 @@ function is_redhat()
     [ -f /etc/redhat-release ]
 }
 
+function sudo()
+{
+    local binsudo=
+    [ -x /bin/sudo ] && binsudo=/bin/sudo
+    $binsudo "$@"
+}
+
 case "$host_os" in
 Linux)
     if is_ubuntu ; then
-        /bin/sudo apt-get install \
+        sudo apt-get install \
             autoconf automake make gcc
     elif is_redhat ; then
-        /bin/sudo yum install -y \
+        sudo yum install -y \
             autoconf automake make
     fi
     ;;
