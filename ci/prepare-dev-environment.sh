@@ -29,7 +29,7 @@ function setup_ubuntu()
 function setup_redhat()
 {
     set -x
-    sudo yum install -y autoconf automake make
+    sudo yum install -y autoconf automake make gcc
 }
 
 case "$host_os" in
