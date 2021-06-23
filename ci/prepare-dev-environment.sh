@@ -22,13 +22,11 @@ function sudo()
 
 function setup_ubuntu()
 {
-    set -x
     sudo apt-get install autoconf automake make gcc
 }
 
 function setup_redhat()
 {
-    set -x
     sudo yum install -y autoconf automake make gcc
 }
 
