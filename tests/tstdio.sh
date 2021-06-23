@@ -17,7 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-. common.sh
+. $PWD/common.sh
 
 param_testStdio="128 4096 8192 16384"
 
