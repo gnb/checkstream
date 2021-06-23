@@ -14,10 +14,10 @@ jobs:
         strategy:
             matrix:
                 container: ["fedora:33"]
-#                container: ["fedora:33", "ubuntu:bionic"]
                 os: [ubuntu-latest]
                 include:
                     - os: macos-latest
+                    - os: ubuntu-latest
         runs-on: ${{ matrix.os }}
         container: ${{ matrix.container }}
         steps:
