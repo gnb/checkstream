@@ -13,7 +13,8 @@ jobs:
         name: Build And Test
         strategy:
             matrix:
-                container: ["fedora:33", "ubuntu:bionic"]
+                container: ["fedora:33"]
+#                container: ["fedora:33", "ubuntu:bionic"]
                 os: [ubuntu-latest]
                 include:
                     - os: macos-latest

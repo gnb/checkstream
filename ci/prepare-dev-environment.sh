@@ -20,14 +20,24 @@ function sudo()
     $binsudo "$@"
 }
 
+function setup_ubuntu()
+{
+    set -x
+    sudo apt-get install autoconf automake make gcc
+}
+
+function setup_redhat()
+{
+    set -x
+    sudo yum install -y autoconf automake make
+}
+
 case "$host_os" in
 Linux)
     if is_ubuntu ; then
-        sudo apt-get install \
-            autoconf automake make gcc
+        setup_ubuntu
     elif is_redhat ; then
-        sudo yum install -y \
-            autoconf automake make
+        setup_redhat
     fi
     ;;
 Darwin)
