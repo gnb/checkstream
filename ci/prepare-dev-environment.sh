@@ -16,10 +16,10 @@ function is_redhat()
 case "$host_os" in
 Linux)
     if is_ubuntu ; then
-        sudo apt-get install \
+        /bin/sudo apt-get install \
             autoconf automake make gcc
     elif is_redhat ; then
-        sudo yum install -y \
+        /bin/sudo yum install -y \
             autoconf automake make
     fi
     ;;
