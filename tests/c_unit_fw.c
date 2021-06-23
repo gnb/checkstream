@@ -1,3 +1,6 @@
+#ifdef __linux__
+#define _GNU_SOURCE     /* to get asprintf() declaration */
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
