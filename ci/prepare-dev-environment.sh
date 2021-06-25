@@ -3,6 +3,12 @@
 set -x
 host_os=$(uname -s)
 
+function fatal()
+{
+    echo "$0: $*" 1>&2
+    exit 1
+}
+
 function is_ubuntu()
 {
     grep Ubuntu /etc/issue > /dev/null 2>&1
@@ -22,7 +28,8 @@ function sudo()
 
 function setup_ubuntu()
 {
-    sudo apt-get install autoconf automake make gcc
+    sudo apt-get update || fatal "apt-get update failed"
+    sudo apt-get install -y autoconf automake make gcc  || fatal "apt-get install failed"
 }
 
 function setup_redhat()
@@ -36,6 +43,8 @@ Linux)
         setup_ubuntu
     elif is_redhat ; then
         setup_redhat
+    else
+        fatal "Unknown Linux distro"
     fi
     ;;
 Darwin)
