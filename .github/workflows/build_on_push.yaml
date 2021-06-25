@@ -13,7 +13,16 @@ jobs:
         name: Build And Test
         strategy:
             matrix:
-                container: ["fedora:33", "ubuntu:bionic"]
+                container:
+                    - "fedora:33"
+                    # Ubuntu 18.04, oldest LTS release still in Standard Support, until 2023-04
+                    - "ubuntu:bionic"
+                    # Ubuntu 20.04, latest LTS release, until 2025-04
+                    - "ubuntu:focal"
+                    # Ubuntu 20.10, interim release, supported until 2021-07
+                    - "ubuntu:groovy"
+                    # Ubuntu 21.04, interim release, supported until 2022-01
+                    - "ubuntu:hirsute"
                 os: [ubuntu-latest]
                 include:
                     - os: macos-latest
