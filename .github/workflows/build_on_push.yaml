@@ -7,7 +7,7 @@
 name: build_on_push
 on:
     push:
-        branches: [ actions-experiment ]
+        branches: [ main ]
 jobs:
     build-and-test:
         name: Build And Test
