@@ -4,13 +4,13 @@
 #
 # Copyright (c) 2021 Greg Banks <gnb@fmeh.org>
 #
-name: build_on_push
+name: Build and Test
 on:
     push:
         branches: [ main ]
 jobs:
     build-and-test:
-        name: Build And Test
+        name: Build and Test
         strategy:
             matrix:
                 container:

@@ -58,5 +58,5 @@ How do I use them?
 
 Read the manual pages for a discussion of some common testing scenarios.
 
-[![Build Status](https://github.com/gnb/checkstream/actions/workflows/build_on_push.yaml/badge.svg?branch=main)](https://github.com/gnb/checkstream/actions/workflows/build_on_push.yaml)
+[![Build Status](https://github.com/gnb/checkstream/workflows/Build%20and%20Test/badge.svg?branch=main)](https://github.com/gnb/checkstream/actions/workflows/build_on_push.yaml)
 
